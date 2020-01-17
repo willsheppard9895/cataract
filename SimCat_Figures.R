@@ -43,7 +43,7 @@ CS_data_long <- all_data %>%
   )%>%
   mutate(eye_condition = as.factor(str_sub(condition_comb, start = 4, end = 11))
   )
-CS_data_long$eye_condition <- factor(CS_data_long$eye_condition, levels=c("NoFilter", "1_Filter", "2_Filter"))
+
 
 Stereo_data_long <- all_data %>%
   select(c(P_ID, Stereo_NoFilter:Stereo_2_Filter)) %>%
@@ -140,19 +140,20 @@ calc <- theme_cowplot() + theme(axis.title = element_text(size = 11),
                                 axis.text.x = element_text(margin = margin(5, 0, 2, 0)), 
                                 axis.ticks.y = element_line(color = "black"), # adds some scale markers to y axis
                                 axis.ticks.x = element_line(color = "black"),
-                                legend.title = element_blank(),
-                                legend.text = element_text(size = 11),
+                                #legend.title = element_blank(),
+                                #legend.text = element_text(size = 11),
                                 strip.text.x = element_text(size = 11, margin = margin(.2,0,.2,0, "cm")),
                                 strip.background =element_rect(fill="white"),
-                                legend.position = c(0.7, 0.2), # chooses where to put the legend. use 0.7,0.9 for Expt 1 and 0.7,0.2 for Expt 2.
-                                legend.direction = "vertical",
+                                legend.position = "none",
+                                #legend.position = c(0.7, 0.2), # chooses where to put the legend. use 0.7,0.9 for Expt 1 and 0.7,0.2 for Expt 2.
+                                #legend.direction = "vertical",
                                 axis.line = element_line(color="black"),
                                 panel.spacing = unit(0.2, "cm"),
                                 #panel.grid.major.x = element_blank(),
                                 panel.grid.major.y = element_blank(),
                                 #panel.grid.major.y = element_line(linetype = "dashed", color = "gray80"),
                                 panel.border = element_rect(color = "white"), # hides panel border, tho its still visible.
-                                plot.background = element_rect(fill = "transparent", color = "transparent")
+                                plot.background = element_rect(fill = "transparent", color = "transparent"),
 )
 
 theme_set(calc)
@@ -162,20 +163,39 @@ theme_set(calc)
 #change coord_cartesian limits (scale) for each test
 #change labels for each test
 
-Plot <- ggplot(data = Aiming_data_summary, aes(x=eye_condition, y=mean_DV, fill=eye_condition)) +
-  #geom_bar(stat = "identity", width=0.5, color = "black", fill = "white") +
-  coord_cartesian(ylim = c(0.5,1.5)) + #change coordinates for each test
-  scale_y_continuous(expand = c(0, 0)) +
-  geom_errorbar(width = 0.2, position = pd, size = es, alpha = .8, color = "black",
-                aes(ymax = mean_DV + se, 
-                    ymin = mean_DV - se)) +
-  geom_point(position = pd, size = ps, color = "black") + #need to work out how to include this without weird legend
-  scale_linetype_manual(values = c(1,2)) +
-  scale_fill_grey(start = .05, end = .5) +
-  scale_color_grey(start = .05, end = .5) +
-  scale_shape_manual(values = c(21, 24)) +
-  labs(x = "Visual Condition", y= "mean MT (s)") 
-Plot
+SumPlot <- function(df, min = 0, max = 20, t){
+  
+  plot <-  ggplot(data = df, aes(x=eye_condition, y=mean_DV, fill=eye_condition)) +
+    geom_bar(stat = "identity", width=0.5, color = "black", fill = "white") +
+    coord_cartesian(ylim = c(min , max)) + #change coordinates for each test
+    scale_y_continuous(expand = c(0, 0)) +
+    geom_errorbar(width = 0.2, position = pd, size = es, alpha = .8, color = "black",
+                  aes(ymax = mean_DV + se, 
+                      ymin = mean_DV - se)) +
+    geom_point(position = pd, size = ps, color = "black") + #need to work out how to include this without weird legend
+    scale_linetype_manual(values = c(1,2)) +
+    scale_fill_grey(start = .05, end = .5) +
+    scale_color_grey(start = .05, end = .5) +
+    scale_shape_manual(values = c(21, 24)) +
+    labs(title = t, x = "Visual Condition", y= "mean MT (s)")
+  
+  return(plot)
+}
+
+Aiming_Plot <- SumPlot(Aiming_data_summary, 0.5, 1.5, "Aiming")
+VA_Plot <- SumPlot(VA_data_summary, -0.1, .4, "Visual Acuity")
+CS_Plot <- SumPlot(CS_data_summary, 7.5, 15, "Constrast Sensitivity")
+Stereo_Plot <- SumPlot(Stereo_data_summary, 0, 8, "Steroacuity")
+PB_Plot <- SumPlot(Pegboard_data_summary, 12, 16, "Pegboard")
+WT_Plot <- SumPlot(WaterTime_data_summary)
+WA_Plot <- SumPlot(WaterAcc_data_summary)
+WTA_Plot <- SumPlot()
+
+show(PB_Plot)
+
+
+
+
 
 setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")
 setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")
