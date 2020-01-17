@@ -26,32 +26,34 @@ Tracking <- all_data %>%
 # Select only the first 50 aiming trials, then only PL_T columns, calculate mean and median of PLT for aiming
 #then calculate the mean 
 Aiming <- all_data %>%
-  select(P_ID_, Eye_order_2_,aim_1_base_PL_T_1:aim_50_base_PL_T_50)
+  select(P_ID_, Eye_order_2_, aim_1_base_PL_T_1:aim_50_base_PL_T_50)
+
 Aiming <- Aiming %>%
-  select(P_ID_, Eye_order_2_, grep("PL_T_", names(Aiming)))
-Aiming <- Aiming %>%
-  mutate(Aim_Mean = rowMeans(select(., starts_with("aim")), na.rm = TRUE), #need to work out how to do median
-        )
-Aiming <- Aiming %>%
+  select(P_ID_, Eye_order_2_, grep("PL_T_", names(Aiming)))%>%
+  mutate(Aim_Mean = rowMeans(select(., starts_with("aim")), na.rm = TRUE),) %>%
   select(P_ID_, Eye_order_2_, Aim_Mean)
 
 
-Steering <- all_data %>%
-  select(P_ID_, Eye_order_2_,Trace1_shapeA_PA_1, Trace1_shapeA_PL_T_1, Trace2_shapeB_PA_1, Trace2_shapeB_PL_T_1, Trace3_shapeA_PA_1, Trace3_shapeA_PL_T_1, Trace4_shapeB_PA_1, Trace4_shapeB_PL_T_1, Trace5_shapeA_PA_1, Trace5_shapeA_PL_T_1, Trace6_shapeB_PA_1, Trace6_shapeB_PL_T_1)
+pPA <- function(PA, PL){
+  PA *(1+((PL -36)/36))
+}
 
-#calculate pPA for steering
-Steering <- Steering %>% 
-  mutate(Trace1_shapeA_pPA = Trace1_shapeA_PA_1 *(1+((Trace1_shapeA_PL_T_1 -36)/36)),
-         Trace2_shapeB_pPA = Trace2_shapeB_PA_1 *(1+((Trace2_shapeB_PL_T_1 -36)/36)),
-         Trace3_shapeA_pPA = Trace3_shapeA_PA_1 *(1+((Trace3_shapeA_PL_T_1 -36)/36)),
-         Trace4_shapeB_pPA = Trace4_shapeB_PA_1 *(1+((Trace4_shapeB_PL_T_1 -36)/36)),
-         Trace5_shapeA_pPA = Trace5_shapeA_PA_1 *(1+((Trace5_shapeA_PL_T_1 -36)/36)),
-         Trace6_shapeB_pPA = Trace6_shapeB_PA_1 *(1+((Trace6_shapeB_PL_T_1 -36)/36)),
+Steering <- all_data %>%
+  select(P_ID_, Eye_order_2_,Trace1_shapeA_PA_1, Trace1_shapeA_PL_T_1, Trace2_shapeB_PA_1, 
+         Trace2_shapeB_PL_T_1, Trace3_shapeA_PA_1, Trace3_shapeA_PL_T_1, Trace4_shapeB_PA_1, 
+         Trace4_shapeB_PL_T_1, Trace5_shapeA_PA_1, Trace5_shapeA_PL_T_1, Trace6_shapeB_PA_1, 
+         Trace6_shapeB_PL_T_1)%>% 
+  mutate(Trace1_shapeA_pPA = pPA(Trace1_shapeA_PA_1, Trace1_shapeA_PL_T_1),
+         Trace2_shapeB_pPA = pPA(Trace2_shapeB_PA_1, Trace2_shapeB_PL_T_1),
+         Trace3_shapeA_pPA = pPA(Trace3_shapeA_PA_1, Trace3_shapeA_PL_T_1),
+         Trace4_shapeB_pPA = pPA(Trace4_shapeB_PA_1, Trace4_shapeB_PL_T_1),
+         Trace5_shapeA_pPA = pPA(Trace5_shapeA_PA_1, Trace5_shapeA_PL_T_1), 
+         Trace6_shapeB_pPA = pPA(Trace6_shapeB_PA_1, Trace6_shapeB_PL_T_1), 
          ShapeA_mean_pPA = (Trace1_shapeA_pPA + Trace3_shapeA_pPA + Trace5_shapeA_pPA)/3,
          ShapeB_mean_pPA = (Trace2_shapeB_pPA + Trace4_shapeB_pPA + Trace6_shapeB_pPA)/3,
-         )
-Steering <- Steering %>%
+  )%>%
   select(P_ID_, Eye_order_2_, ShapeA_mean_pPA:ShapeB_mean_pPA)
+
 
 ##################
 ## now to transform data to wide format for analysis in SPSS/JASP.
@@ -325,4 +327,3 @@ setwd("C:/Users/wills/Documents/Cataract/Figures")
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Will_Paper/Figures")
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Will_Paper/Figures")
 ggsave("Aiming.png", dpi = 800, height = 5, width = 6)
-

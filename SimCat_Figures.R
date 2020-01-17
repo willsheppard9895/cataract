@@ -163,8 +163,8 @@ theme_set(calc)
 #change coord_cartesian limits (scale) for each test
 #change labels for each test
 
-SumPlot <- function(df, min = 0, max = 20, t){
-  
+SumPlot <- function(df, min = 0, max = 20, t = "MT by Visual Condition Plot"){
+  # Creates summary plots, min, max and title defined ot allow quick examination
   plot <-  ggplot(data = df, aes(x=eye_condition, y=mean_DV, fill=eye_condition)) +
     geom_bar(stat = "identity", width=0.5, color = "black", fill = "white") +
     coord_cartesian(ylim = c(min , max)) + #change coordinates for each test
@@ -187,11 +187,13 @@ VA_Plot <- SumPlot(VA_data_summary, -0.1, .4, "Visual Acuity")
 CS_Plot <- SumPlot(CS_data_summary, 7.5, 15, "Constrast Sensitivity")
 Stereo_Plot <- SumPlot(Stereo_data_summary, 0, 8, "Steroacuity")
 PB_Plot <- SumPlot(Pegboard_data_summary, 12, 16, "Pegboard")
-WT_Plot <- SumPlot(WaterTime_data_summary)
-WA_Plot <- SumPlot(WaterAcc_data_summary)
-WTA_Plot <- SumPlot()
+WT_Plot <- SumPlot(WaterTime_data_summary, 12, 18, "Water Pouring - Time")
+WA_Plot <- SumPlot(WaterAcc_data_summary, 5, 25) +
+  labs( y = "Accuracy (ml)")
+WTA_Plot <- SumPlot(WaterTimebyAcc_data_summary, 100, 350, "Waterpouring Time by accuracy") +
+  labs(y = "Time x Accuracy (s ml)")
 
-show(PB_Plot)
+#show(WTA_Plot)
 
 
 
