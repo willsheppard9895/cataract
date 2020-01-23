@@ -340,7 +340,10 @@ A lower composite score indicated an overall better water-pouring performance.
 ## Procedure
 After consenting, participants provided demographic, handedness and vision (corrected/uncorrected) information.
 All participants completed the tasks in the same order (Purdue Pegboard, CKAT Aiming, Water-pouring), but the order of the visual condition was counterbalanced between participants.
-**Insert PROCEDURE_DIAGRAM**
+
+```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=3, fig.align='center'}
+knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/Procedure_Diagram.png")
+```
 
 ## Design
 A repeated measures design was used with visual condition (no filters, 1 filter, 2 filters) as the independent variable for all measures.
@@ -386,6 +389,10 @@ Pegboard scores were best/highest under the no filter condition and worst/lowest
 A significant main effect of visual condition emerged, F (2, 58) = 4.76, p <.05, **need symbol here**2 = 0.14. 
 This was driven by significant differences in scores between no filter and 2 filters, p <.05, *Cohen’s d* = .50 and between 1 filter and 2 filters, p <.05, *Cohen’s d* = 0.47, but not between no filter and 1 filter, p =.80, *Cohen’s d* = .05.
 
+```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=2, fig.align='center'}
+knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/Pegboard_exp2.png")
+```
+
 ### Aiming.  
 Aiming scores were best/lowest in the no filter condition and worst/highest in the 2 filter condition (no filter mean(SD) = 1.21(0.32), 1 filter mean(SD) = 1.23(0.25), 2 filter mean = 1.28(0.27)). 
 No main effect of visual condition emerged F (2, 58) = 0.984, p =.38, **need symbol here**2 = 0.03.  
@@ -394,14 +401,32 @@ If these participants are removed from the analysis (leaving an n of 28) the mai
 Aiming scores were best/lowest in the no filter condition and worst/highest in the 2 filter condition (no filter mean(SD) = 1.15(0.19), 1 filter mean(SD) = 1.18(0.18), 2 filter mean = 1.26(0.27)).
 A main effect of visual condition emerged F (2, 54) = 4.41, p <.05, **need symbol here**2 = 0.14.  This was driven by significant differences in scores between no filter and 2 filters, p <.05, *Cohen’s d* = .52, but not between no filter and 1 filter, p =.23, *Cohen’s d* = .23, or 1 filter and 2 filters, p =.19, *Cohen’s d* = 0.33.
 
+```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=2, fig.align='center'}
+knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/Aiming_exp2.png")
+```
+
 ### Water-pouring.
 Water-pouring time scores were higher in the 1 and 2 filter conditions compared to the no filter condition (no filter mean(SD) = 15.40(2.90), 1 filter mean(SD) = 16.28(4.08), 2 filter mean = 16.03(14.21), but no main effect of visual condition emerged, F (2, 58) = 1.95, p = .152, **need symbol here**2 = 0.06. 
+
+```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=2, fig.align='center'}
+knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/WaterPouring-Time_exp2.png")
+```
+
 For accuracy, participants were most accurate in the no filter condition and least accurate in the 2 filter condition (no filter mean(SD) = 11.30(9.57), 1 filter mean(SD) = 14.80(8.34), 2 filter mean = 18.70(9.43).
 A significant main effect of visual condition emerged, F (2, 58) = 5.79, p <.01, **need symbol here**2 = 0.16.
 This was driven by significant differences in scores between no filter and 2 filters, p <.01, *Cohen’s d* = .59 but not between no filter and 1 filter, p =.18, *Cohen’s d* = .32, or 1 filter and 2 filters, p =.18, *Cohen’s d* = 0.32.
+
+```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=2, fig.align='center'}
+knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/WaterPouringAccuracy_exp2.png")
+```
+
 Taking both speed and accuracy together, the composite measure of speed*accuracy showed lowest/best scores under the no filter condition and highest/worst scores under the 2 filter condition (no filter mean(SD) = 165(132), 1 filter mean(SD) = 238(145), 2 filter mean = 294(152)).
 A main effect of visual condition was found F (2, 58) = 6.70, p <.01,  **need symbol here**2 = 0.19.
 This was driven by significant differences in scores between no filter and 1 filter, p =.05, *Cohen’s d* = .43 and between no filter and 2 filters, p <.01, *Cohen’s d* = .65 but not between 1 filter and 2 filters, p =.16, *Cohen’s d* = 0.27. 
+
+```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=2, fig.align='center'}
+knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/WaterpouringTimebyaccuracy_exp2.png")
+```
 
 # Discussion
 
