@@ -185,7 +185,7 @@ SumPlot <- function(df, min = 0, max = 20, t = "MT by Visual Condition Plot"){
 }
 
 Aiming_Plot <- SumPlot(Aiming_data_summary, 0.5, 1.5, "Aiming")
-VA_Plot <- SumPlot(VA_data_summary, -0.1, .4, "Visual Acuity")
+VA_Plot <- SumPlot(VA_data_summary, -0.1, .4, "VisualAcuity")
 CS_Plot <- SumPlot(CS_data_summary, 7.5, 15, "ConstrastSensitivity")
 Stereo_Plot <- SumPlot(Stereo_data_summary, 0, 8, "Steroacuity")
 PB_Plot <- SumPlot(Pegboard_data_summary, 12, 16, "Pegboard")

@@ -68,6 +68,18 @@ set.seed(42)
 knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
 ```
 
+```{r, include=FALSE}
+source("monoc_binoc_CKAT_data_extract_andFigures.R")
+```
+
+```{r, include=FALSE, cache=FALSE}
+knitr::read_chunk("monoc_binoc_CKAT_data_extract_andFigures.R")
+```
+
+```{r, mb_trackinging_plot, echo=FALSE}
+show(figure)
+```
+
 Cataract is a common eye condition that involves the progressive clouding of the crystalline lens.
 Cataracts typically present bilaterally and cause deterioration in visual function. 
 Individuals will typically begin to experience these deficits in high and low light conditions and may struggle to carry out tasks such as driving (NHS, 2017). 
@@ -245,9 +257,6 @@ No main effect of visual condition emerged, F(1.65, 115.68) = 1.44, p =.24, **ne
 There were significant main effects for guide, F(1,70) = 5.29, p <.02, **need symbol here**2 = .07, and speed, F(1.04,72.59) = 235.21, p <.001, **need symbol here**2 = .77, and a guide by speed interaction, F(1.07,74.65) = 10.10, p <.01, **need symbol here**2 = .13 but no interactions involving visual condition.
 This pattern of results was the same when all participants with a logMAR score over >0.2 in either eye were excluded (remaining n=55).
 
-```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=2, fig.align='center'}
-knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/Tracking.png")
-```
 
 ## Aiming
 Aiming scores were highest/worst in the worse eye condition and lowest/best in the binocular condition (better eye mean(SD) = 1.12(.16), worse eye mean(SD) = 1.13(.14), binocular mean = 1.05(.14)).
@@ -255,9 +264,7 @@ A significant main effect of visual condition emerged F(2,142) = 12.61, p <.01, 
 This was driven by significant differences in aiming scores between binocular vision and the better eye, p <.001, *Cohen’s d* = .46, binocular vision and the worse eye, p <.001, *Cohen’s d* = .56 but not between the two monocular conditions, p = .48, *Cohen’s d* = .08.
 As with tracking, this pattern of results was the same when all participants with a logMAR score over >0.2 in either eye were excluded (remaining N = 56).
 
-```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=2, fig.align='center'}
-knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/Aiming.png")
-```
+
 
 ## Steering
 Steering pPA scores were highest/worst in the worse eye condition and lowest/best in the binocular condition (Shape A: better eye mean(SD) = .85(.16), worse eye mean(SD) = .90(.23), binocular mean = .83(.14)) (Shape B: better eye mean(SD) = .81(.11), worse eye mean(SD) = .87(.31), binocular mean = .77(.13)).
@@ -270,9 +277,6 @@ The main effect of shape became not significant, F(1,55) = 3.74, p =.058, **need
 The main effect of visual condition remained F(1.37,75.07) = 4.66, p <.05, **need symbol here**2 = .08, but this was now only driven by a significant difference between binocular vision and the worse eye, p <.05, *Cohen’s d* = .37.
 There was no difference between binocular vision and the better eye, p =.08, *Cohen’s d* = .28 or between the two monocular conditions, p =.13, *Cohen’s d* = .20. 
 
-```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=2, fig.align='center'}
-knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/Steering.png")
-```
 
 # Discussion
 
@@ -357,27 +361,15 @@ VA (logMAR) was worst/highest in the 2 filter condition and best/lowest in the n
 A significant main effect of visual condition emerged, F(2, 58) = 293.37, p <.001, **need symbol here** 2 = .91.
 This was driven by significant differences in logMAR scores between no filter and 1 filter, p <.05, *Cohen’s d* = .40, no filter and 2 filters, p <.001, *Cohen’s d* = 3.63 and between 1 filter and 2 filters, p <.001, *Cohen’s d* = 3.51. 
 
-```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=2, fig.align='center'}
-knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/VisualAcuity_exp2.png")
-```
-
 ### Contrast Sensitivity. 
 CS scores were worst/lowest in the 2 filter condition and best/highest in the no filter condition (no filter mean(SD) = 12.53(.59), 1 filter mean(SD) = 12.12(.41), 2 filter mean = 10.82(.77)).
 A significant main effect of visual condition was found F(1.51, 43.75) = 74.49, p <.001, **need symbol here**2 = 0.72.
 This was driven by significant differences in scores between no filter and 1 filter, p <.001, *Cohen’s d* = .79, no filter and 2 filters, p <.001, *Cohen’s d* = 1.87 and between 1 filter and 2 filters, p <.001, *Cohen’s d* = 1.44.  
 
-```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=2, fig.align='center'}
-knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/ConstrastSensitivity_exp2.png")
-```
-
 ### Stereopsis. 
 Stereopsis scores were worst/lowest in the 1 filter condition and best/highest in the no filter condition (no filter mean(SD) = 6.43(2.49), 1 filter mean(SD) = 2.93(2.18), 2 filter mean = 3.87(2.01)).
 A significant main effect of visual condition emerged, F (1.66, 48.03) = 45.76, p <.001, **need symbol here**2 = 0.61.
 This was driven by significant differences in scores between no filter and 1 filter, p <.001, *Cohen’s d* = 1.40, no filter and 2 filters, p <.001, *Cohen’s d* = 1.45 and between 1 filter and 2 filters, p <.011, *Cohen’s d* = 0.50.  
-
-```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=2, fig.align='center'}
-knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/Steroacuity_exp2.png")
-```
 
 ## Motor measures.
 
