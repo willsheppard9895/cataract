@@ -179,18 +179,20 @@ SumPlot <- function(df, min = 0, max = 20, t = "MT by Visual Condition Plot"){
     scale_shape_manual(values = c(21, 24)) +
     labs(title = t, x = "Visual Condition", y= "mean MT (s)")
   
+  ggsave(filename = paste(t,"_exp2.png", sep = ""), dpi = 800, height = 5, width = 6)
+  
   return(plot)
 }
 
 Aiming_Plot <- SumPlot(Aiming_data_summary, 0.5, 1.5, "Aiming")
 VA_Plot <- SumPlot(VA_data_summary, -0.1, .4, "Visual Acuity")
-CS_Plot <- SumPlot(CS_data_summary, 7.5, 15, "Constrast Sensitivity")
+CS_Plot <- SumPlot(CS_data_summary, 7.5, 15, "ConstrastSensitivity")
 Stereo_Plot <- SumPlot(Stereo_data_summary, 0, 8, "Steroacuity")
 PB_Plot <- SumPlot(Pegboard_data_summary, 12, 16, "Pegboard")
-WT_Plot <- SumPlot(WaterTime_data_summary, 12, 18, "Water Pouring - Time")
-WA_Plot <- SumPlot(WaterAcc_data_summary, 5, 25) +
+WT_Plot <- SumPlot(WaterTime_data_summary, 12, 18, "WaterPouring-Time")
+WA_Plot <- SumPlot(WaterAcc_data_summary, 5, 25, "WaterPouringAccuracy") +
   labs( y = "Accuracy (ml)")
-WTA_Plot <- SumPlot(WaterTimebyAcc_data_summary, 100, 350, "Waterpouring Time by accuracy") +
+WTA_Plot <- SumPlot(WaterTimebyAcc_data_summary, 100, 350, "WaterpouringTimebyaccuracy") +
   labs(y = "Time x Accuracy (s ml)")
 
 #show(WTA_Plot)
@@ -198,9 +200,9 @@ WTA_Plot <- SumPlot(WaterTimebyAcc_data_summary, 100, 350, "Waterpouring Time by
 
 
 
-
-setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")
-setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")
-ggsave("Aiming.png", dpi = 800, height = 5, width = 6)
+setwd("C:/Users/wills/Documents/Cataract/Figures")
+#setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")
+#setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")
+ggsave("2Aiming.png", dpi = 800, height = 5, width = 6)
 
 
