@@ -7,6 +7,7 @@ library(plyr)
 library(tidyverse)
 library(cowplot)
 library (ggpubr)
+library(knitr)
 
 rm(list = ls()) #clears all variables from workspace
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Monocular_Binocular_Expt/StudentData")
@@ -92,16 +93,15 @@ df_wide_All_CKAT <- df_wide_All_CKAT %>%
   select(-c(P_ID_.1, P_ID_.2))
 
 # rename columns to something sensible
-df_wide_All_CKAT <- df_wide_All_CKAT %>%
-  rename(Trkng_NG_Slow_Both = Trkng_NG_Slow_F_track_error_RMS_1_Both, Trkng_NG_Slow_Worse = Trkng_NG_Slow_F_track_error_RMS_1_Bad, Trkng_NG_Slow_Better = Trkng_NG_Slow_F_track_error_RMS_1_Good,
-         Trkng_NG_Medi_Both = Trkng_NG_Med_F_track_error_RMS_2_Both, Trkng_NG_Medi_Worse = Trkng_NG_Med_F_track_error_RMS_2_Bad, Trkng_NG_Medi_Better = Trkng_NG_Med_F_track_error_RMS_2_Good, 
-         Trkng_NG_Fast_Both = Trkng_NG_Fst_F_track_error_RMS_3_Both, Trkng_NG_Fast_Worse = Trkng_NG_Fst_F_track_error_RMS_3_Bad, Trkng_NG_Fast_Better = Trkng_NG_Fst_F_track_error_RMS_3_Good,
-         Trkng_WG_Slow_Both = Trkng_WG_Slow_F_track_error_RMS_1_Both, Trkng_WG_Slow_Worse = Trkng_WG_Slow_F_track_error_RMS_1_Bad, Trkng_WG_Slow_Better = Trkng_WG_Slow_F_track_error_RMS_1_Good,
-         Trkng_WG_Medi_Both = Trkng_WG_Med_F_track_error_RMS_2_Both, Trkng_WG_Medi_Worse = Trkng_WG_Med_F_track_error_RMS_2_Bad, Trkng_WG_Medi_Better = Trkng_WG_Med_F_track_error_RMS_2_Good, 
-         Trkng_WG_Fast_Both = Trkng_WG_Fst_F_track_error_RMS_3_Both, Trkng_WG_Fast_Worse = Trkng_WG_Fst_F_track_error_RMS_3_Bad, Trkng_WG_Fast_Better = Trkng_WG_Fst_F_track_error_RMS_3_Good,
-         Aiming_Better = Good, Aiming_Worse = Bad, Aiming_Both = Both,
-         SteeringA_Better = ShapeA_mean_pPA_Good, SteeringA_Worse = ShapeA_mean_pPA_Bad, SteeringA_Both = ShapeA_mean_pPA_Both, 
-         SteeringB_Better = ShapeB_mean_pPA_Good, SteeringB_Worse = ShapeB_mean_pPA_Bad, SteeringB_Both = ShapeB_mean_pPA_Both
+df_wide_All_CKAT <- rename(df_wide_All_CKAT, "Trkng_NG_Slow_Both" = "Trkng_NG_Slow_F_track_error_RMS_1_Both", "Trkng_NG_Slow_Worse" = "Trkng_NG_Slow_F_track_error_RMS_1_Bad", "Trkng_NG_Slow_Better" = "Trkng_NG_Slow_F_track_error_RMS_1_Good",
+         "Trkng_NG_Medi_Both" = "Trkng_NG_Med_F_track_error_RMS_2_Both", "Trkng_NG_Medi_Worse" = "Trkng_NG_Med_F_track_error_RMS_2_Bad", "Trkng_NG_Medi_Better" = "Trkng_NG_Med_F_track_error_RMS_2_Good", 
+         "Trkng_NG_Fast_Both" = "Trkng_NG_Fst_F_track_error_RMS_3_Both", "Trkng_NG_Fast_Worse" = "Trkng_NG_Fst_F_track_error_RMS_3_Bad", "Trkng_NG_Fast_Better" = "Trkng_NG_Fst_F_track_error_RMS_3_Good",
+         "Trkng_WG_Slow_Both" = "Trkng_WG_Slow_F_track_error_RMS_1_Both", "Trkng_WG_Slow_Worse" = "Trkng_WG_Slow_F_track_error_RMS_1_Bad", "Trkng_WG_Slow_Better" = "Trkng_WG_Slow_F_track_error_RMS_1_Good",
+         "Trkng_WG_Medi_Both" = "Trkng_WG_Med_F_track_error_RMS_2_Both", "Trkng_WG_Medi_Worse" = "Trkng_WG_Med_F_track_error_RMS_2_Bad", "Trkng_WG_Medi_Better" = "Trkng_WG_Med_F_track_error_RMS_2_Good", 
+         "Trkng_WG_Fast_Both" = "Trkng_WG_Fst_F_track_error_RMS_3_Both", "Trkng_WG_Fast_Worse" = "Trkng_WG_Fst_F_track_error_RMS_3_Bad", "Trkng_WG_Fast_Better" = "Trkng_WG_Fst_F_track_error_RMS_3_Good",
+         "Aiming_Better" = "Good", "Aiming_Worse" = "Bad", "Aiming_Both" = "Both",
+         "SteeringA_Better" = "ShapeA_mean_pPA_Good", "SteeringA_Worse" = "ShapeA_mean_pPA_Bad", "SteeringA_Both" = "ShapeA_mean_pPA_Both", 
+         "SteeringB_Better" = "ShapeB_mean_pPA_Good", "SteeringB_Worse" = "ShapeB_mean_pPA_Bad", "SteeringB_Both" = "ShapeB_mean_pPA_Both"
          )
 
 #write.csv(df_wide_All_CKAT,"ALL_CKAT_for_JASP.csv", row.names = F)
@@ -229,6 +229,7 @@ Tracking_data_NG <- Tracking_data_summary  %>%
 Tracking_data_WG <- Tracking_data_summary %>%
   filter(guide=="With Guide")
 
+
 ## create plots
 
 plot1 <- ggplot(Tracking_data_NG, aes(x = eye_condition, y = mean_RMSE,
@@ -266,6 +267,9 @@ plot2 <- ggplot(Tracking_data_WG, aes(x = eye_condition, y = mean_RMSE,
         legend.text = element_text(size = 20))
 #show(plot2)
 
+
+
+## ----mb_trackinging_plot--------
 # this pastes the 2 tracking plots together on one figure
 figure <- ggarrange(plot1, plot2,
                     labels = c("No Guide", "With Guide"), hjust = -1.0, vjust = 1.0, # hjust and vjust move the position of the label (horiz and vertical). Smaller numbers mean further right and down
@@ -277,8 +281,10 @@ show(figure)
 
 
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Will_Paper/Figures")
-setwd("C:/Users/wills/Documents/Cataract/Figures")
-ggsave("Tracking.png", dpi = 800, height = 8, width = 10)
+#setwd("C:/Users/wills/Documents/Cataract/Figures")
+#ggsave("Tracking.png", dpi = 800, height = 8, width = 10)
+
+## ----mb_steering_plot--------
 
 #Steering
 Steering_plot <- ggplot(Steering_data_summary, aes(x = eye_condition, y = mean_pPA,
@@ -298,12 +304,14 @@ Steering_plot <- ggplot(Steering_data_summary, aes(x = eye_condition, y = mean_p
   theme(legend.position = c(0.7, 0.6), legend.title = element_text(size = 20),
         legend.text = element_text(size = 20))
 
-#show(Steering_plot)
+show(Steering_plot)
 
 setwd("C:/Users/wills/Documents/Cataract/Figures")
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Will_Paper/Figures")
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Will_Paper/Figures")
 ggsave("Steering.png", dpi = 800, height = 5, width = 6)
+
+## ----mb_aiming_plot--------
 
 #Aiming
 Aiming_Plot <- ggplot(data = Aiming_data_summary, aes(x=eye_condition, y=mean_MT, fill=eye_condition)) +
@@ -321,9 +329,10 @@ Aiming_Plot <- ggplot(data = Aiming_data_summary, aes(x=eye_condition, y=mean_MT
   labs(x = "Visual Condition", y= "mean MT (s)") +
   theme(legend.position = "none")
 
-#show(Aiming_Plot)
+show(Aiming_Plot)
 
 setwd("C:/Users/wills/Documents/Cataract/Figures")
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Will_Paper/Figures")
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Will_Paper/Figures")
 ggsave("Aiming.png", dpi = 800, height = 5, width = 6)
+
