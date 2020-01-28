@@ -163,7 +163,7 @@ theme_set(calc)
 #change coord_cartesian limits (scale) for each test
 #change labels for each test
 
-SumPlot <- function(df, min = 0, max = 20, t = "MT by Visual Condition Plot"){
+SumPlot <- function(df, min = 0, max = 20, t = "MT by Visual Condition Plot", x = "blank"){
   # Creates summary plots, min, max and title defined ot allow quick examination
   plot <-  ggplot(data = df, aes(x=eye_condition, y=mean_DV, fill=eye_condition)) +
     geom_bar(stat = "identity", width=0.5, color = "black", fill = "white") +
@@ -177,7 +177,8 @@ SumPlot <- function(df, min = 0, max = 20, t = "MT by Visual Condition Plot"){
     scale_fill_grey(start = .05, end = .5) +
     scale_color_grey(start = .05, end = .5) +
     scale_shape_manual(values = c(21, 24)) +
-    labs(title = t, x = "Visual Condition", y= "mean MT (s)")
+    labs(title = t, x = "Visual Condition", y= "mean MT (s)") +
+    geom_hline(linetype = x, yintercept = 0)
   
   ggsave(filename = paste(t,"_exp2.png", sep = ""), dpi = 800, height = 5, width = 6)
   
@@ -185,7 +186,7 @@ SumPlot <- function(df, min = 0, max = 20, t = "MT by Visual Condition Plot"){
 }
 
 Aiming_Plot <- SumPlot(Aiming_data_summary, 0.5, 1.5, "Aiming")
-VA_Plot <- SumPlot(VA_data_summary, -0.1, .4, "VisualAcuity")
+VA_Plot <- SumPlot(VA_data_summary, -0.1, .4, "VisualAcuity", x = "solid")
 CS_Plot <- SumPlot(CS_data_summary, 7.5, 15, "ConstrastSensitivity")
 Stereo_Plot <- SumPlot(Stereo_data_summary, 0, 8, "Steroacuity")
 PB_Plot <- SumPlot(Pegboard_data_summary, 12, 16, "Pegboard")
