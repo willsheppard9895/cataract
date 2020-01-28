@@ -180,7 +180,7 @@ SumPlot <- function(df, min = 0, max = 20, t = "MT by Visual Condition Plot", x 
     labs(title = t, x = "Visual Condition", y= "mean MT (s)") +
     geom_hline(linetype = x, yintercept = 0)
   
-  ggsave(filename = paste(t,"_exp2.png", sep = ""), dpi = 800, height = 5, width = 6)
+  ggsave(filename = paste(t,"_exp2.png", sep = ""), dpi = 800, height = 4, width = 6)
   
   return(plot)
 }
@@ -214,26 +214,28 @@ SumPlot_NB <- function(df, min = 0, max = 20, t = "MT by Visual Condition Plot",
     labs(title = t, x = "Visual Condition", y= "mean MT (s)") +
     geom_hline(linetype = x, yintercept = 0)
   
-  ggsave(filename = paste(t,"_exp2.png", sep = ""), dpi = 800, height = 5, width = 6)
+  ggsave(filename = paste(t,"_exp2.png", sep = ""), dpi = 800, height = 4, width = 6)
   
   return(plot)
 }
 
-Aiming_Plot_NB <- SumPlot_NB(Aiming_data_summary, 0.5, 1.5, "Aiming")
-VA_Plot_NB <- SumPlot_NB(VA_data_summary, -0.1, .4, "VisualAcuity", x = "solid")
-CS_Plot_NB <- SumPlot_NB(CS_data_summary, 7.5, 15, "ConstrastSensitivity")
-Stereo_Plot_NB <- SumPlot_NB(Stereo_data_summary, 0, 8, "Steroacuity")
-PB_Plot_NB <- SumPlot_NB(Pegboard_data_summary, 12, 16, "Pegboard")
-WT_Plot_NB <- SumPlot_NB(WaterTime_data_summary, 12, 18, "WaterPouring-Time")
-WA_Plot_NB <- SumPlot_NB(WaterAcc_data_summary, 5, 25, "WaterPouringAccuracy") +
+setwd("C:/Users/wills/Documents/Cataract/Figures")
+
+Aiming_Plot_NB <- SumPlot_NB(Aiming_data_summary, 0.5, 1.5, "Aiming_NB")
+VA_Plot_NB <- SumPlot_NB(VA_data_summary, -0.1, .4, "VisualAcuity_NB", x = "solid")
+CS_Plot_NB <- SumPlot_NB(CS_data_summary, 7.5, 15, "ConstrastSensitivity_NB")
+Stereo_Plot_NB <- SumPlot_NB(Stereo_data_summary, 0, 8, "Steroacuity_NB")
+PB_Plot_NB <- SumPlot_NB(Pegboard_data_summary, 12, 16, "Pegboard_NB")
+WT_Plot_NB <- SumPlot_NB(WaterTime_data_summary, 12, 18, "WaterPouring-Time_NB")
+WA_Plot_NB <- SumPlot_NB(WaterAcc_data_summary, 5, 25, "WaterPouringAccuracy_NB") +
   labs( y = "Accuracy (ml)")
-WTA_Plot_NB <- SumPlot_NB(WaterTimebyAcc_data_summary, 100, 350, "WaterpouringTimebyaccuracy") +
+WTA_Plot_NB <- SumPlot_NB(WaterTimebyAcc_data_summary, 100, 350, "WaterpouringTimebyaccuracy_NB") +
   labs(y = "Time x Accuracy (s ml)")
 
 
 setwd("C:/Users/wills/Documents/Cataract/Figures")
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")
-ggsave("2Aiming.png", dpi = 800, height = 5, width = 6)
+#ggsave("2Aiming.png", dpi = 800, height = 5, width = 6)
 
 
