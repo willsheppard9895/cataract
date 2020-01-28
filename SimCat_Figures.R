@@ -198,7 +198,37 @@ WTA_Plot <- SumPlot(WaterTimebyAcc_data_summary, 100, 350, "WaterpouringTimebyac
 
 #show(WTA_Plot)
 
+SumPlot_NB <- function(df, min = 0, max = 20, t = "MT by Visual Condition Plot", x = "blank"){
+  # Creates summary plots, min, max and title defined ot allow quick examination
+  plot <-  ggplot(data = df, aes(x=eye_condition, y=mean_DV, fill=eye_condition)) +geom_bar(stat = "identity", width=0.5, color = "black", fill = "white") +
+    coord_cartesian(ylim = c(min , max)) + #change coordinates for each test
+    scale_y_continuous(expand = c(0, 0)) +
+    geom_errorbar(width = 0.2, position = pd, size = es, alpha = .8, color = "black",
+                  aes(ymax = mean_DV + se, 
+                      ymin = mean_DV - se)) +
+    geom_point(position = pd, size = ps, color = "black") + #need to work out how to include this without weird legend
+    scale_linetype_manual(values = c(1,2)) +
+    scale_fill_grey(start = .05, end = .5) +
+    scale_color_grey(start = .05, end = .5) +
+    scale_shape_manual(values = c(21, 24)) +
+    labs(title = t, x = "Visual Condition", y= "mean MT (s)") +
+    geom_hline(linetype = x, yintercept = 0)
+  
+  ggsave(filename = paste(t,"_exp2.png", sep = ""), dpi = 800, height = 5, width = 6)
+  
+  return(plot)
+}
 
+Aiming_Plot_NB <- SumPlot_NB(Aiming_data_summary, 0.5, 1.5, "Aiming")
+VA_Plot_NB <- SumPlot_NB(VA_data_summary, -0.1, .4, "VisualAcuity", x = "solid")
+CS_Plot_NB <- SumPlot_NB(CS_data_summary, 7.5, 15, "ConstrastSensitivity")
+Stereo_Plot_NB <- SumPlot_NB(Stereo_data_summary, 0, 8, "Steroacuity")
+PB_Plot_NB <- SumPlot_NB(Pegboard_data_summary, 12, 16, "Pegboard")
+WT_Plot_NB <- SumPlot_NB(WaterTime_data_summary, 12, 18, "WaterPouring-Time")
+WA_Plot_NB <- SumPlot_NB(WaterAcc_data_summary, 5, 25, "WaterPouringAccuracy") +
+  labs( y = "Accuracy (ml)")
+WTA_Plot_NB <- SumPlot_NB(WaterTimebyAcc_data_summary, 100, 350, "WaterpouringTimebyaccuracy") +
+  labs(y = "Time x Accuracy (s ml)")
 
 
 setwd("C:/Users/wills/Documents/Cataract/Figures")
