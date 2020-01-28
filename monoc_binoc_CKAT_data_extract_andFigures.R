@@ -93,7 +93,7 @@ df_wide_All_CKAT <- df_wide_All_CKAT %>%
   select(-c(P_ID_.1, P_ID_.2))
 
 # rename columns to something sensible
-df_wide_All_CKAT <- rename(df_wide_All_CKAT, "Trkng_NG_Slow_Both" = "Trkng_NG_Slow_F_track_error_RMS_1_Both", "Trkng_NG_Slow_Worse" = "Trkng_NG_Slow_F_track_error_RMS_1_Bad", "Trkng_NG_Slow_Better" = "Trkng_NG_Slow_F_track_error_RMS_1_Good",
+df_wide_All_CKAT <- dplyr::rename(df_wide_All_CKAT, "Trkng_NG_Slow_Both" = "Trkng_NG_Slow_F_track_error_RMS_1_Both", "Trkng_NG_Slow_Worse" = "Trkng_NG_Slow_F_track_error_RMS_1_Bad", "Trkng_NG_Slow_Better" = "Trkng_NG_Slow_F_track_error_RMS_1_Good",
          "Trkng_NG_Medi_Both" = "Trkng_NG_Med_F_track_error_RMS_2_Both", "Trkng_NG_Medi_Worse" = "Trkng_NG_Med_F_track_error_RMS_2_Bad", "Trkng_NG_Medi_Better" = "Trkng_NG_Med_F_track_error_RMS_2_Good", 
          "Trkng_NG_Fast_Both" = "Trkng_NG_Fst_F_track_error_RMS_3_Both", "Trkng_NG_Fast_Worse" = "Trkng_NG_Fst_F_track_error_RMS_3_Bad", "Trkng_NG_Fast_Better" = "Trkng_NG_Fst_F_track_error_RMS_3_Good",
          "Trkng_WG_Slow_Both" = "Trkng_WG_Slow_F_track_error_RMS_1_Both", "Trkng_WG_Slow_Worse" = "Trkng_WG_Slow_F_track_error_RMS_1_Bad", "Trkng_WG_Slow_Better" = "Trkng_WG_Slow_F_track_error_RMS_1_Good",
@@ -143,29 +143,31 @@ Steering_data_long <- df_wide_All_CKAT %>%
           mutate(eye_condition = as.factor(str_sub(condition_comb, start = 11, end = 16))
                 )
 
-# obtain group summary stats to make figures 
+# obtain group summary stats to make figures #### throwing error ####
+
+
 
 Tracking_data_summary <- Tracking_data_long%>% 
   group_by(eye_condition,guide,speed)%>%
-  summarise(mean_RMSE = mean(RMSE), #why wont mean work but median will?
+  dplyr::summarise(mean_RMSE = mean(RMSE), #why wont mean work but median will?
             sd = sd(RMSE), 
-            n = n(), 
+            n = dplyr::n(), 
             se = sd/sqrt(n))%>%
   ungroup()
 
 Aiming_data_summary <- Aiming_data_long%>%
   group_by(eye_condition)%>%
-  summarise(mean_MT = mean(MT), 
+  dplyr::summarise(mean_MT = mean(MT), 
             sd = sd(MT), 
-            n = n(), 
+            n = (dplyr::n()), 
             se = sd/sqrt(n))%>%
   ungroup()
 
 Steering_data_summary <- Steering_data_long%>%
   group_by(eye_condition,shape)%>%
-  summarise(mean_pPA = mean(pPA), 
+  dplyr::summarise(mean_pPA = mean(pPA), 
             sd = sd(pPA), 
-            n = n(), 
+            n = dplyr::n(), 
             se = sd/sqrt(n))%>%
   ungroup()
 
@@ -268,16 +270,15 @@ plot2 <- ggplot(Tracking_data_WG, aes(x = eye_condition, y = mean_RMSE,
 #show(plot2)
 
 
-
 ## ----mb_trackinging_plot--------
 # this pastes the 2 tracking plots together on one figure
-figure <- ggarrange(plot1, plot2,
+tracking_plot <- ggarrange(plot1, plot2,
                     labels = c("No Guide", "With Guide"), hjust = -1.0, vjust = 1.0, # hjust and vjust move the position of the label (horiz and vertical). Smaller numbers mean further right and down
                     font.label = list(size = 12, color= "black"),
                     ncol = 2, nrow = 1,
                     align = "h")#,
 #common.legend = TRUE, legend = "bottom") # also need to change legend to "horizontal" in calc section
-show(figure)
+#show(figure)
 
 
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Will_Paper/Figures")
@@ -301,15 +302,16 @@ Steering_plot <- ggplot(Steering_data_summary, aes(x = eye_condition, y = mean_p
   scale_color_grey(start = .05, end = .5) +
   scale_shape_manual(values = c(21, 24)) +
   labs(x = "Visual Condition", y= "Mean penalised path accuracy") + 
-  theme(legend.position = c(0.7, 0.6), legend.title = element_text(size = 20),
-        legend.text = element_text(size = 20))
+  theme(legend.position = c(0.7, 0.7), legend.title = element_text(size = 15),
+        legend.text = element_text(size = 15))
 
 show(Steering_plot)
+
 
 setwd("C:/Users/wills/Documents/Cataract/Figures")
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Will_Paper/Figures")
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Will_Paper/Figures")
-ggsave("Steering.png", dpi = 800, height = 5, width = 6)
+ggsave("Steering.png", dpi = 800, height = 4, width = 6)
 
 ## ----mb_aiming_plot--------
 
@@ -331,8 +333,26 @@ Aiming_Plot <- ggplot(data = Aiming_data_summary, aes(x=eye_condition, y=mean_MT
 
 show(Aiming_Plot)
 
+ggsave("Aiming_Plot", dpi = 800, height = 4, width = 6)
+
+Aiming_Plot_no_bar <- ggplot(data = Aiming_data_summary, aes(x=eye_condition, y=mean_MT, fill=eye_condition)) +
+  coord_cartesian(ylim = c(0.5,1.5)) +
+  scale_y_continuous(expand = c(0, 0)) +
+  geom_errorbar(width = 0.2, position = pd, size = es, alpha = .8, color = "black",
+                aes(ymax = mean_MT + se, 
+                    ymin = mean_MT - se)) +
+  geom_point(position = pd, size = ps, color = "black") + #need to work out how to include this without weird legend
+  scale_linetype_manual(values = c(1,2)) +
+  scale_fill_grey(start = .05, end = .5) +
+  scale_color_grey(start = .05, end = .5) +
+  scale_shape_manual(values = c(21, 24)) +
+  labs(x = "Visual Condition", y= "mean MT (s)") +
+  theme(legend.position = "none")
+
+show(Aiming_Plot_no_bar)
+
 setwd("C:/Users/wills/Documents/Cataract/Figures")
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Will_Paper/Figures")
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Will_Paper/Figures")
-ggsave("Aiming.png", dpi = 800, height = 5, width = 6)
+ggsave("Aiming_No_Bar.png", dpi = 800, height = 4, width = 6)
 
