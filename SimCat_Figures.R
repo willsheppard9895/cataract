@@ -164,7 +164,7 @@ theme_set(calc)
 #change coord_cartesian limits (scale) for each test
 #change labels for each test
 
-SumPlot <- function(df, min = 0, max = 20, t = "MT by Visual Condition Plot", x = "blank", y_lab = "mean MT (s)"){
+SumPlot <- function(df, min = 0, max = 20, x = "blank", y_lab = "mean MT (s)"){
   # Creates summary plots, min, max and title defined ot allow quick examination
   plot <-  ggplot(data = df, aes(x=eye_condition, y=mean_DV, fill=eye_condition)) +
     geom_bar(stat = "identity", width=0.5, color = "black", fill = "white") +
@@ -178,27 +178,28 @@ SumPlot <- function(df, min = 0, max = 20, t = "MT by Visual Condition Plot", x 
     scale_fill_grey(start = .05, end = .5) +
     scale_color_grey(start = .05, end = .5) +
     scale_shape_manual(values = c(21, 24)) +
-    labs(title = t, x = "Visual Condition", y= y_lab) +
-    geom_hline(linetype = x, yintercept = 0)
+    labs(x = "Visual Condition", y= y_lab) +
+    geom_hline(linetype = x, yintercept = 0) +
+    scale_x_discrete(labels = c("No Filter", "1 Filter", "2 Filters"))
   
-  ggsave(filename = paste(t,"_exp2.png", sep = ""), dpi = 800, height = 4, width = 6)
+  ggsave(filename = paste(df,"_exp2.png", sep = ""), dpi = 800, height = 4, width = 6)
   
   return(plot)
 }
 
 setwd("C:/Users/wills/Documents/Cataract/Figures")
 
-Aiming_Plot <- SumPlot(Aiming_data_summary, 0.5, 1.5, "Aiming")
-VA_Plot <- SumPlot(VA_data_summary, -0.1, .4, "VisualAcuity", x = "solid", y_lab = "logMAR")
-CS_Plot <- SumPlot(CS_data_summary, 7.5, 15, "ConstrastSensitivity", y_lab = "Hamilton-Veale Test Score")
-Stereo_Plot <- SumPlot(Stereo_data_summary, 0, 8, "Steroacuity", y_lab = "Titmus Stereo Fly Test Score")
-PB_Plot <- SumPlot(Pegboard_data_summary, 12, 16, "Pegboard", y_lab = "Correct Placements")
-WT_Plot <- SumPlot(WaterTime_data_summary, 12, 18, "WaterPouring-Time", y_lab = "Time (s)") 
-WA_Plot <- SumPlot(WaterAcc_data_summary, 5, 25, "WaterPouringAccuracy", y_lab = "Accuracy (ml)")
-WTA_Plot <- SumPlot(WaterTimebyAcc_data_summary, 100, 350, "WaterpouringTimebyaccuracy", y_lab = "Time x Accuracy (s/ml)")
+Aiming_Plot <- SumPlot(Aiming_data_summary, 0.5, 1.5)
+VA_Plot <- SumPlot(VA_data_summary, -0.1, .4, x = "solid", y_lab = "logMAR")
+CS_Plot <- SumPlot(CS_data_summary, 7.5, 15, y_lab = "Hamilton-Veale Test Score")
+Stereo_Plot <- SumPlot(Stereo_data_summary, 0, 8, y_lab = "Titmus Stereo Fly Test Score")
+PB_Plot <- SumPlot(Pegboard_data_summary, 12, 16, y_lab = "Correct Placements")
+WT_Plot <- SumPlot(WaterTime_data_summary, 12, 18, y_lab = "Time (s)") 
+WA_Plot <- SumPlot(WaterAcc_data_summary, 5, 25, y_lab = "Accuracy (ml)")
+WTA_Plot <- SumPlot(WaterTimebyAcc_data_summary, 100, 350, y_lab = "Time x Accuracy (s/ml)")
 #show(WTA_Plot)
 
-SumPlot_NB <- function(df, min = 0, max = 20, t = "MT by Visual Condition Plot", x = "blank", y_lab = "mean MT (s)"){
+SumPlot_NB <- function(df, min = 0, max = 20, x = "blank", y_lab = "mean MT (s)", lab){
   # Creates summary plots, min, max and title defined ot allow quick examination
   plot <-  ggplot(data = df, aes(x=eye_condition, y=mean_DV, fill=eye_condition)) +
     coord_cartesian(ylim = c(min , max)) + #change coordinates for each test
@@ -211,28 +212,29 @@ SumPlot_NB <- function(df, min = 0, max = 20, t = "MT by Visual Condition Plot",
     scale_fill_grey(start = .05, end = .5) +
     scale_color_grey(start = .05, end = .5) +
     scale_shape_manual(values = c(21, 24)) +
-    labs(title = t, x = "Visual Condition", y= y_lab) +
-    geom_hline(linetype = x, yintercept = 0)
+    labs(x = "Visual Condition", y= y_lab) +
+    geom_hline(linetype = x, yintercept = 0) +
+    scale_x_discrete(labels = c("No Filter", "1 Filter", "2 Filters"))
   
-  ggsave(filename = paste(t,"_exp2.png", sep = ""), dpi = 800, height = 4, width = 6)
+  ggsave(filename = paste(lab,"_exp2.png", sep = ""), dpi = 800, height = 4, width = 6)
   
   return(plot)
 }
 
 setwd("C:/Users/wills/Documents/Cataract/Figures")
 
-Aiming_Plot_NB <- SumPlot_NB(Aiming_data_summary, 0.5, 1.5, "Aiming_NB")
-VA_Plot_NB <- SumPlot_NB(VA_data_summary, -0.1, .4, "VisualAcuity_NB", x = "solid", y_lab = "logMAR")
-CS_Plot_NB <- SumPlot_NB(CS_data_summary, 7.5, 15, "ConstrastSensitivity_NB", y_lab = "Hamilton-Veale Test Score")
-Stereo_Plot_NB <- SumPlot_NB(Stereo_data_summary, 0, 8, "Steroacuity_NB", y_lab = "Titmus Stereo Fly Test Score")
-PB_Plot_NB <- SumPlot_NB(Pegboard_data_summary, 12, 16, "Pegboard_NB", y_lab = "Correct Placements")
-WT_Plot_NB <- SumPlot_NB(WaterTime_data_summary, 12, 18, "WaterPouring-Time_NB", y_lab = "Time (s)") 
-WA_Plot_NB <- SumPlot_NB(WaterAcc_data_summary, 5, 25, "WaterPouringAccuracy_NB", y_lab = "Accuracy (ml)")
-WTA_Plot_NB <- SumPlot_NB(WaterTimebyAcc_data_summary, 100, 350, "WaterpouringTimebyaccuracy_NB", y_lab = "Time x Accuracy (s/ml)")
+Aiming_Plot_NB <- SumPlot_NB(Aiming_data_summary, 0.5, 1.5, lab = "Aiming_NB")
+VA_Plot_NB <- SumPlot_NB(VA_data_summary, -0.1, .4, lab = "VisualAcuity_NB", x = "solid", y_lab = "logMAR")
+CS_Plot_NB <- SumPlot_NB(CS_data_summary, 7.5, 15, lab = "ConstrastSensitivity_NB", y_lab = "Hamilton-Veale Test Score")
+Stereo_Plot_NB <- SumPlot_NB(Stereo_data_summary, 0, 8, lab = "Steroacuity_NB", y_lab = "Titmus Stereo Fly Test Score")
+PB_Plot_NB <- SumPlot_NB(Pegboard_data_summary, 12, 16, lab = "Pegboard_NB", y_lab = "Correct Placements")
+WT_Plot_NB <- SumPlot_NB(WaterTime_data_summary, 12, 18, lab = "WaterPouring-Time_NB", y_lab = "Time (s)") 
+WA_Plot_NB <- SumPlot_NB(WaterAcc_data_summary, 5, 25, lab = "WaterPouringAccuracy_NB", y_lab = "Accuracy (ml)")
+WTA_Plot_NB <- SumPlot_NB(WaterTimebyAcc_data_summary, 100, 350, lab = "WaterpouringTimebyaccuracy_NB", y_lab = "Time x Accuracy (s/ml)")
 
-#show(WTA_Plot_NB)
+show(WTA_Plot_NB)
 
-#setwd("C:/Users/wills/Documents/Cataract/Figures")
+##setwd("C:/Users/wills/Documents/Cataract/Figures")
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")
 #ggsave("2Aiming.png", dpi = 800, height = 5, width = 6)
