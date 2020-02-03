@@ -2,6 +2,7 @@ library(plyr)
 library(tidyverse)
 library(cowplot)
 library (ggpubr)
+library(Hmisc)
 
 ## Exp 1
 
@@ -327,7 +328,19 @@ OneTwo <- exp2_ALL_MEASURES[1, c(3, 6, 9, 12, 15, 18, 21, 24)] - exp2_ALL_MEASUR
 
 delta <- rbind(ZeroOne, ZeroTwo, OneTwo)
 
-change = c("ZeroOne", "ZeroTwo", "OneTwo")
+change = c("ZeroMinusOne", "ZeroMinusTwo", "OneMinusTwo")
 
 delta <- cbind(change, delta)
+
+delta <- delta %>% remove_rownames %>% column_to_rownames(var="change")
+
+
+######################################### Create plots with delta data set ####################################
+
+#corr_matrix <- cor(delta)
+#corr_matrix
+
+corr_matrix2 <- rcorr(as.matrix(delta))
+corr_matrix2
+
                
