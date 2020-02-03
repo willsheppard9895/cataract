@@ -101,7 +101,12 @@ exp1_wide_All_CKAT <- dplyr::rename(exp1_wide_All_CKAT, "Trkng_NG_Slow_Both" = "
                                   "SteeringB_Better" = "ShapeB_mean_pPA_Good", "SteeringB_Worse" = "ShapeB_mean_pPA_Bad", "SteeringB_Both" = "ShapeB_mean_pPA_Both"
 )
 
+exp1_vision_data <- read.csv("ParticiapntVisionData_exp1.csv")
+
+exp1_wide_ALL_MEASURES <- cbind(exp1_vision_data, subset(exp1_wide_All_CKAT, select = -c(P_ID_)))
+
 #write.csv(df_wide_All_CKAT,"ALL_CKAT_for_JASP.csv", row.names = F)
+#write.csv(exp1_wide_ALL_MEASURES,"exp1_wide_ALL_MEASURES.csv", row.names = F)
 
 
 #######################################
@@ -337,8 +342,8 @@ delta <- delta %>% remove_rownames %>% column_to_rownames(var="change")
 
 ######################################### Create plots with delta data set ####################################
 
-#corr_matrix <- cor(delta)
-#corr_matrix
+corr_matrix <- cor(delta)
+corr_matrix
 
 corr_matrix2 <- rcorr(as.matrix(delta))
 corr_matrix2
