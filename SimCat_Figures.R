@@ -221,7 +221,7 @@ SumPlot_NB <- function(df, min = 0, max = 20, x = "blank", y_lab = "mean MT (s)"
   return(plot)
 }
 
-setwd("C:/Users/wills/Documents/Cataract/Figures")
+#setwd("C:/Users/wills/Documents/Cataract/Figures")
 
 Aiming_Plot_NB <- SumPlot_NB(Aiming_data_summary, 0.5, 1.5, lab = "Aiming_NB")
 VA_Plot_NB <- SumPlot_NB(VA_data_summary, -0.1, .4, lab = "VisualAcuity_NB", x = "solid", y_lab = "logMAR")
@@ -232,7 +232,7 @@ WT_Plot_NB <- SumPlot_NB(WaterTime_data_summary, 12, 18, lab = "WaterPouring-Tim
 WA_Plot_NB <- SumPlot_NB(WaterAcc_data_summary, 5, 25, lab = "WaterPouringAccuracy_NB", y_lab = "Accuracy (ml)")
 WTA_Plot_NB <- SumPlot_NB(WaterTimebyAcc_data_summary, 100, 350, lab = "WaterpouringTimebyaccuracy_NB", y_lab = "Time x Accuracy (s/ml)")
 
-show(WTA_Plot_NB)
+#show(WTA_Plot_NB)
 
 ##setwd("C:/Users/wills/Documents/Cataract/Figures")
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")

@@ -1,0 +1,23 @@
+---
+title: "Do visual outcomes and functional ability correlate?"
+author: "William Sheppard"
+date: "31/01/2020"
+output: html_document
+---
+This chunk sets options for all chuncks that follow 
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+
+```{r libraries}
+library(tidyverse)
+```
+
+```{r source_code}
+source("monoc_binoc_CKAT_data_extract_andFigures.R")
+source("SimCat_Figures.R")
+
+```

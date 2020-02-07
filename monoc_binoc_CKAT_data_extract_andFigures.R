@@ -7,7 +7,7 @@ library(plyr)
 library(tidyverse)
 library(cowplot)
 library (ggpubr)
-library(knitr)
+
 
 rm(list = ls()) #clears all variables from workspace
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Monocular_Binocular_Expt/StudentData")
@@ -331,7 +331,7 @@ Aiming_Plot <- ggplot(data = Aiming_data_summary, aes(x=eye_condition, y=mean_MT
   labs(x = "Visual Condition", y= "mean MT (s)") +
   theme(legend.position = "none")
 
-show(Aiming_Plot)
+#show(Aiming_Plot)
 
 ggsave("Aiming_Plot", dpi = 800, height = 4, width = 6)
 
@@ -349,7 +349,7 @@ Aiming_Plot_no_bar <- ggplot(data = Aiming_data_summary, aes(x=eye_condition, y=
   labs(x = "Visual Condition", y= "mean MT (s)") +
   theme(legend.position = "none")
 
-show(Aiming_Plot_no_bar)
+#show(Aiming_Plot_no_bar)
 
 setwd("C:/Users/wills/Documents/Cataract/Figures")
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Will_Paper/Figures")

@@ -60,6 +60,7 @@ library("papaja")
 library("tidyverse")
 library("knitr")
 
+
 ```
 
 ```{r analysis-preferences}
@@ -245,8 +246,12 @@ No main effect of visual condition emerged, F(1.65, 115.68) = 1.44, p =.24, $\et
 There were significant main effects for guide, F(1,70) = 5.29, p <.02, $\eta^2$ = .07, and speed, F(1.04,72.59) = 235.21, p <.001, $\eta^2$ = .77, and a guide by speed interaction, F(1.07,74.65) = 10.10, p <.01, $\eta^2$ = .13 but no interactions involving visual condition.
 This pattern of results was the same when all participants with a logMAR score over >0.2 in either eye were excluded (remaining n=55).
 
-```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=2, fig.align='center'}
-knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/Tracking.png")
+```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=3, fig.align='center'}
+#knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/Tracking.png")
+
+source('monoc_binoc_CKAT_data_extract_andFigures.R')
+
+Steering_plot
 ```
 
 ## Aiming
@@ -255,8 +260,10 @@ A significant main effect of visual condition emerged F(2,142) = 12.61, p <.01, 
 This was driven by significant differences in aiming scores between binocular vision and the better eye, p <.001, *Cohen’s d* = .46, binocular vision and the worse eye, p <.001, *Cohen’s d* = .56 but not between the two monocular conditions, p = .48, *Cohen’s d* = .08.
 As with tracking, this pattern of results was the same when all participants with a logMAR score over >0.2 in either eye were excluded (remaining N = 56).
 
-```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=2, fig.align='center'}
-knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/Aiming.png")
+```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=3, fig.align='center'}
+#knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/Aiming.png")
+
+Aiming_Plot
 ```
 
 ## Steering
@@ -270,8 +277,10 @@ The main effect of shape became not significant, F(1,55) = 3.74, p =.058, $\eta^
 The main effect of visual condition remained F(1.37,75.07) = 4.66, p <.05, $\eta^2$ = .08, but this was now only driven by a significant difference between binocular vision and the worse eye, p <.05, *Cohen’s d* = .37.
 There was no difference between binocular vision and the better eye, p =.08, *Cohen’s d* = .28 or between the two monocular conditions, p =.13, *Cohen’s d* = .20. 
 
-```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=2, fig.align='center'}
-knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/Steering.png")
+```{r eval = TRUE, echo = FALSE, message=FALSE, error= FALSE, warning=FALSE, fig.height=3, fig.width = 8, fig.align='center'}
+#knitr::include_graphics("C:/Users/wills/Documents/Cataract/Figures/Steering.png")
+
+figure
 ```
 
 # Discussion
