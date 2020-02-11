@@ -3,6 +3,7 @@ library(tidyverse)
 library(cowplot)
 library (ggpubr)
 library(Hmisc)
+library(corrplot)
 
 ## Exp 1
 
@@ -101,7 +102,8 @@ exp1_wide_All_CKAT <- dplyr::rename(exp1_wide_All_CKAT, "Trkng_NG_Slow_Both" = "
                                   "SteeringB_Better" = "ShapeB_mean_pPA_Good", "SteeringB_Worse" = "ShapeB_mean_pPA_Bad", "SteeringB_Both" = "ShapeB_mean_pPA_Both"
 )
 
-exp1_vision_data <- read.csv("ParticiapntVisionData_exp1.csv")
+
+exp1_vision_data <- read.csv("exp1_ParticiapntVisionData.csv")
 
 exp1_wide_ALL_MEASURES <- cbind(exp1_vision_data, subset(exp1_wide_All_CKAT, select = -c(P_ID_)))
 
@@ -216,7 +218,12 @@ exp2_long_aiming <- exp2_data %>%
   mutate(test = as.factor(str_sub(condition_comb,start = 1,end = 3)) 
   )%>%
   mutate(eye_condition = as.factor(str_sub(condition_comb, start = 5, end = 12))
-  )
+  ) %>%
+  arrange(P_ID, eye_condition)
+
+exp2_mean_aiming <- exp2_long_aiming %>%
+  select(DV) %>%
+  rename("aiming" = "DV")
 
 exp2_long_VA <- exp2_data %>%
   select(c(P_ID, VA_NoFilter:VA_2_Filter)) %>%
@@ -224,7 +231,12 @@ exp2_long_VA <- exp2_data %>%
   mutate(test = as.factor(str_sub(condition_comb,start = 1,end = 3)) 
   )%>%
   mutate(eye_condition = as.factor(str_sub(condition_comb, start = 4, end = 11))
-  )
+  ) %>%
+  arrange(P_ID, eye_condition)
+
+exp2_mean_VA <- exp2_long_VA %>%
+  select(DV) %>%
+  rename("VA" = "DV")
 
 exp2_long_CS <- exp2_data %>%
   select(c(P_ID, CS_NoFilter:CS_2_Filter)) %>%
@@ -232,7 +244,12 @@ exp2_long_CS <- exp2_data %>%
   mutate(test = as.factor(str_sub(condition_comb,start = 1,end = 3)) 
   )%>%
   mutate(eye_condition = as.factor(str_sub(condition_comb, start = 4, end = 11))
-  )
+  ) %>%
+  arrange(P_ID, eye_condition)
+
+exp2_mean_CS <- exp2_long_CS %>%
+  select(DV) %>%
+  rename("CS" = "DV")
 
 
 exp2_long_stereo <- exp2_data %>%
@@ -241,7 +258,12 @@ exp2_long_stereo <- exp2_data %>%
   mutate(test = as.factor(str_sub(condition_comb,start = 1,end = 3)) 
   )%>%
   mutate(eye_condition = as.factor(str_sub(condition_comb, start = 8, end = 15))
-  )
+  )%>%
+  arrange(P_ID, eye_condition)
+
+exp2_mean_stereo <- exp2_long_stereo %>%
+  select(DV) %>%
+  rename("stereoacuity" = "DV")
 
 exp2_long_pegboard <- exp2_data %>%
   select(c(P_ID, Pegb_NoFilter:Pegb_2_Filter)) %>%
@@ -249,7 +271,12 @@ exp2_long_pegboard <- exp2_data %>%
   mutate(test = as.factor(str_sub(condition_comb,start = 1,end = 3)) 
   )%>%
   mutate(eye_condition = as.factor(str_sub(condition_comb, start = 6, end = 13))
-  )
+  ) %>%
+  arrange(P_ID, eye_condition)
+
+exp2_mean_pegboard <- exp2_long_pegboard %>%
+  select(DV) %>%
+  rename("pegboard" = "DV")
 
 exp2_long_water_time <- exp2_data %>%
   select(c(P_ID, Water_NoFilter_Time:Water_2_Filter_Time)) %>%
@@ -257,7 +284,12 @@ exp2_long_water_time <- exp2_data %>%
   mutate(test = as.factor(str_sub(condition_comb,start = 1,end = 3)) 
   )%>%
   mutate(eye_condition = as.factor(str_sub(condition_comb, start = 7, end = 14))
-  )
+  ) %>%
+  arrange(P_ID, eye_condition)
+
+exp2_mean_water_time <- exp2_long_water_time %>%
+  select(DV) %>%
+  rename("water_time" = "DV")
 
 exp2_long_water_acc <- exp2_data %>%
   select(c(P_ID, Water_NoFilter_Accuracy:Water_2_Filter_Accuracy)) %>%
@@ -265,7 +297,12 @@ exp2_long_water_acc <- exp2_data %>%
   mutate(test = as.factor(str_sub(condition_comb,start = 1,end = 3)) 
   )%>%
   mutate(eye_condition = as.factor(str_sub(condition_comb, start = 7, end = 14))
-  )
+  ) %>%
+  arrange(P_ID, eye_condition)
+
+exp2_mean_water_acc <- exp2_long_water_acc %>%
+  select(DV) %>%
+  rename("water_acc" = "DV")
 
 exp2_long_water_time_acc <- exp2_data %>%
   select(c(P_ID, Water_NoFilter_time.accuracy:Water_2_Filter_time.accuracy)) %>%
@@ -273,8 +310,24 @@ exp2_long_water_time_acc <- exp2_data %>%
   mutate(test = as.factor(str_sub(condition_comb,start = 1,end = 3)) 
   )%>%
   mutate(eye_condition = as.factor(str_sub(condition_comb, start = 7, end = 14))
-  )
+  ) %>%
+  arrange(P_ID, eye_condition)
 
+exp2_mean_water_time_acc <- exp2_long_water_time_acc %>%
+  select(DV) %>%
+  rename("WTA" = "DV")
+
+condition <- exp2_long_aiming %>%
+  select(P_ID, eye_condition)
+
+exp2_mean_ALL_MEASURES <- cbind(condition, exp2_mean_VA, exp2_mean_CS, exp2_mean_stereo, exp2_mean_aiming,
+                                exp2_mean_pegboard, exp2_mean_water_acc, exp2_mean_water_time, exp2_mean_water_time_acc)
+
+insp_plot <- ggplot(exp2_mean_ALL_MEASURES, aes(x = eye_condition, y = pegboard, col = VA))+
+  geom_boxplot() +
+  geom_point(alpha = .8, position = "jitter") +
+  scale_color_gradientn(colours = rainbow(3))
+show(insp_plot)
 
 #obtain summary stats (eye_condition means) for plotting
 #change test_data_summary and test_data_long to test you want
@@ -342,10 +395,56 @@ delta <- delta %>% remove_rownames %>% column_to_rownames(var="change")
 
 ######################################### Create plots with delta data set ####################################
 
-corr_matrix <- cor(delta)
-corr_matrix
+data <- exp2_mean_ALL_MEASURES[, -c(1,2)]
 
-corr_matrix2 <- rcorr(as.matrix(delta))
-corr_matrix2
+cm <- rcorr((as.matrix(data)))
 
-               
+#cm <- cor(data)
+
+# Insignificant correlation are crossed
+corrplot(cm$r, order="hclust", type = "upper",
+         p.mat = cm$P, sig.level = 0.05, insig = "blank")
+
+#exp2_change_ALL_MEASURES <- exp2_mean_ALL_MEASURES %>% 
+#  group_by(P_ID, eye_condition) %>%
+#  summarise(zero_one = NoFilter - 1_Filter)
+
+NoFilter = filter(exp2_mean_ALL_MEASURES, exp2_mean_ALL_MEASURES$eye_condition=="NoFilter")
+OneFilter = filter(exp2_mean_ALL_MEASURES, exp2_mean_ALL_MEASURES$eye_condition=="1_Filter")
+TwoFilter = filter(exp2_mean_ALL_MEASURES, exp2_mean_ALL_MEASURES$eye_condition=="2_Filter")
+
+OneMinusNone = OneFilter[,3:10] - NoFilter[,3:10]
+OneMinusNone$change <- ("OneMinusNone")
+OneMinusNone$P_ID <- (NoFilter$P_ID)
+
+TwoMinusNone = TwoFilter[,3:10] - NoFilter[,3:10]
+TwoMinusNone$change <- ("TwoMinusNone")
+TwoMinusNone$P_ID <- (NoFilter$P_ID)
+
+TwoMinusOne = TwoFilter[,3:10] - OneFilter[,3:10]
+TwoMinusOne$change <- ("TwoMinusOne")
+TwoMinusOne$P_ID <- (NoFilter$P_ID)
+
+OMN_cor <- rcorr((as.matrix(OneMinusNone[,1:8])))
+OMN_corplot <- corrplot.mixed(OMN_cor$r, order="hclust",
+         p.mat = OMN_cor$P, sig.level = 0.05, insig = "blank")
+
+TMN_cor <- rcorr((as.matrix(TwoMinusNone[,1:8])))
+TMN_corplot <- corrplot.mixed(TMN_cor$r, order="hclust",
+                              p.mat = TMN_cor$P, sig.level = 0.05, insig = "blank")
+
+TMO_cor <- rcorr((as.matrix(TwoMinusOne[,1:8])))
+TMO_corplot <- corrplot.mixed(TMO_cor$r, order="hclust",
+                                  p.mat = TMO_cor$P, sig.level = 0.05, insig = "blank")
+
+exp2_ALL_CHANGE <- rbind(OneMinusNone, TwoMinusOne, TwoMinusOne)
+AC_cor <- rcorr((as.matrix(exp2_ALL_CHANGE[, 1:8])))
+AC_corplot <- corrplot.mixed(AC_cor$r, order="hclust", upper = "ellipse", lower = "number",
+                              p.mat = AC_cor$P, sig.level = 0.05, insig = "blank")
+
+
+ggsave(filename = "C:/Users/wills/Documents/Cataract/Figures/CorrPlot.png", dpi = 800, height = 6, width = 7)
+
+"C:/Users/wills/Documents/Cataract/Data"
+write.csv(ALL_CHANGE,"exp2_ALL_CHANGE.csv", row.names = F)
+
