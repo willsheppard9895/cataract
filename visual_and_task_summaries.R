@@ -4,6 +4,7 @@ library(cowplot)
 library (ggpubr)
 library(Hmisc)
 library(corrplot)
+library(ggpubr)
 
 ## Exp 1
 
@@ -115,6 +116,13 @@ exp1_wide_ALL_MEASURES <- cbind(exp1_vision_data, subset(exp1_wide_All_CKAT, sel
 # to make figures
 # these lines convert the data back into 'long' form -again!
 
+exp1_long_vision <- exp1_vision_data %>%
+  pivot_longer(-P_ID_, names_to = c("eye_condition"), values_to = "VA_LogMAR") %>%
+  filter(eye_condition == c("LogMAR_BetterEye ", "LogMAR_WorseEye", "LogMAR_BothEyes"))
+
+
+
+#### import tracking data and get ready for correlation - change
 exp1_long_tracking <- exp1_wide_All_CKAT[-c(16),] %>% # removed P44 (row 16) as no bad eye tracking data
   select(c(P_ID_, Trkng_NG_Slow_Worse:Trkng_WG_Fast_Both)) %>%
   gather(condition_comb, RMSE, Trkng_NG_Slow_Worse:Trkng_WG_Fast_Both) %>% # might need to switch from gather to pivot_longer as no longer supported. df %>% gather("key", "value", x, y, z) is equivalent to df %>% pivot_longer(c(x, y, z), names_to = "key", values_to = "value")
@@ -129,13 +137,65 @@ exp1_long_tracking <- exp1_wide_All_CKAT[-c(16),] %>% # removed P44 (row 16) as 
   mutate(RMSE = as.numeric(RMSE))
 
 
+exp1_cor_TrackingNG_Slow <- exp1_long_tracking %>%
+  filter(guide == "NG", speed == "Slow") %>%
+  arrange(P_ID_, eye_condition) %>%
+  dplyr::rename("Tracking_NG_Slow_RMSE" = "RMSE") %>%
+  select(Tracking_NG_Slow_RMSE)
+
+exp1_cor_TrackingNG_Medi <- exp1_long_tracking %>%
+  filter(guide == "NG", speed == "Medi") %>%
+  arrange(P_ID_, eye_condition) %>%
+  dplyr::rename("Tracking_NG_Medi_RMSE" = "RMSE")%>%
+  select(Tracking_NG_Medi_RMSE)
+
+exp1_cor_TrackingNG_Fast <- exp1_long_tracking %>%
+  filter(guide == "NG",  speed == "Fast") %>%
+  arrange(P_ID_, eye_condition) %>%
+  dplyr::rename("Tracking_NG_Fast_RMSE" = "RMSE")%>%
+  select(Tracking_NG_Fast_RMSE)
+
+
+exp1_cor_trackingWG_Slow  <- exp1_long_tracking %>%
+  filter(guide == "WG", speed == "Slow") %>%
+  arrange(P_ID_, eye_condition) %>%
+  dplyr::rename("Tracking_WG_Slow_RMSE" = "RMSE")%>%
+  select(Tracking_WG_Slow_RMSE)
+
+exp1_cor_trackingWG_Medi  <- exp1_long_tracking %>%
+  filter(guide == "WG", speed == "Medi") %>%
+  arrange(P_ID_, eye_condition) %>%
+  dplyr::rename("Tracking_WG_Medi_RMSE" = "RMSE")%>%
+  select(Tracking_WG_Medi_RMSE)
+
+exp1_cor_trackingWG_Fast  <- exp1_long_tracking %>%
+  filter(guide == "WG", speed == "Fast") %>%
+  arrange(P_ID_, eye_condition) %>%
+  dplyr::rename("Tracking_WG_Fast_RMSE" = "RMSE")%>%
+  select(Tracking_WG_Fast_RMSE)
+
+
+exp1_cor_tracking <- cbind(exp1_cor_TrackingNG_Slow, exp1_cor_TrackingNG_Medi, exp1_cor_TrackingNG_Fast,
+                           exp1_cor_trackingWG_Slow,exp1_cor_trackingWG_Medi, exp1_cor_trackingWG_Fast)
+
+
+######## Import aiming data and get ready for correlation andalysis
+
 exp1_long_aiming <- exp1_wide_All_CKAT %>%
   select(c(P_ID_, Aiming_Worse:Aiming_Better)) %>%
   gather(condition_comb, MT, Aiming_Worse:Aiming_Better) %>%
   mutate(test = as.factor(str_sub(condition_comb,start = 1,end = 6)) 
   )%>%
   mutate(eye_condition = as.factor(str_sub(condition_comb, start = 8, end = 13))
-  )
+  ) %>%
+  arrange(P_ID_, eye_condition)
+
+exp1_cor_aiming <- exp1_long_aiming %>%
+  dplyr::rename("aiming_MT" = "MT") %>%
+  select(aiming_MT)
+  
+
+######## Import steering data and get ready for correlation andalysis
 
 exp1_long_steering <- exp1_wide_All_CKAT %>%
   select(c(P_ID_, SteeringA_Worse:SteeringB_Both)) %>%
@@ -145,7 +205,28 @@ exp1_long_steering <- exp1_wide_All_CKAT %>%
   mutate(shape = as.factor(str_sub(condition_comb, start = 9, end = 9))
   )%>%
   mutate(eye_condition = as.factor(str_sub(condition_comb, start = 11, end = 16))
-  )
+  ) %>%
+  arrange(P_ID_, eye_condition)
+
+exp1_cor_steering_A <- exp1_long_steering %>%
+  filter(shape == "A") %>%
+  dplyr::rename("Steering_A_pPA" = "pPA")%>%
+  select(Steering_A_pPA)  
+
+exp1_cor_steering_B <- exp1_long_steering %>%
+  filter(shape == "B") %>%
+  dplyr::rename("Steering_B_pPA" = "pPA")%>%
+  select(Steering_B_pPA) 
+
+exp1_cor_steering <- cbind(exp1_cor_steering_A, exp1_cor_steering_B)
+
+##### Bring together exp1 data for correlation anaylsis ######
+
+exp1_participant_condition_list <- exp1_long_TrackingNG_Fast %>%
+  select(P_ID_, eye_condition)
+
+#exp1_ALL_DATA <- cbind(exp1_participant_condition_list, )
+
 
 # obtain group summary stats to make figures #### throwing error ####
 
@@ -223,7 +304,7 @@ exp2_long_aiming <- exp2_data %>%
 
 exp2_mean_aiming <- exp2_long_aiming %>%
   select(DV) %>%
-  rename("aiming" = "DV")
+  dplyr::rename("aiming" = "DV")
 
 exp2_long_VA <- exp2_data %>%
   select(c(P_ID, VA_NoFilter:VA_2_Filter)) %>%
@@ -236,7 +317,7 @@ exp2_long_VA <- exp2_data %>%
 
 exp2_mean_VA <- exp2_long_VA %>%
   select(DV) %>%
-  rename("VA" = "DV")
+  dplyr::rename("VA" = "DV")
 
 exp2_long_CS <- exp2_data %>%
   select(c(P_ID, CS_NoFilter:CS_2_Filter)) %>%
@@ -249,7 +330,7 @@ exp2_long_CS <- exp2_data %>%
 
 exp2_mean_CS <- exp2_long_CS %>%
   select(DV) %>%
-  rename("CS" = "DV")
+  dplyr::rename("CS" = "DV")
 
 
 exp2_long_stereo <- exp2_data %>%
@@ -263,7 +344,7 @@ exp2_long_stereo <- exp2_data %>%
 
 exp2_mean_stereo <- exp2_long_stereo %>%
   select(DV) %>%
-  rename("stereoacuity" = "DV")
+  dplyr::rename("stereoacuity" = "DV")
 
 exp2_long_pegboard <- exp2_data %>%
   select(c(P_ID, Pegb_NoFilter:Pegb_2_Filter)) %>%
@@ -276,7 +357,7 @@ exp2_long_pegboard <- exp2_data %>%
 
 exp2_mean_pegboard <- exp2_long_pegboard %>%
   select(DV) %>%
-  rename("pegboard" = "DV")
+  dplyr::rename("pegboard" = "DV")
 
 exp2_long_water_time <- exp2_data %>%
   select(c(P_ID, Water_NoFilter_Time:Water_2_Filter_Time)) %>%
@@ -289,7 +370,7 @@ exp2_long_water_time <- exp2_data %>%
 
 exp2_mean_water_time <- exp2_long_water_time %>%
   select(DV) %>%
-  rename("water_time" = "DV")
+  dplyr::rename("water_time" = "DV")
 
 exp2_long_water_acc <- exp2_data %>%
   select(c(P_ID, Water_NoFilter_Accuracy:Water_2_Filter_Accuracy)) %>%
@@ -302,7 +383,7 @@ exp2_long_water_acc <- exp2_data %>%
 
 exp2_mean_water_acc <- exp2_long_water_acc %>%
   select(DV) %>%
-  rename("water_acc" = "DV")
+  dplyr::rename("water_acc" = "DV")
 
 exp2_long_water_time_acc <- exp2_data %>%
   select(c(P_ID, Water_NoFilter_time.accuracy:Water_2_Filter_time.accuracy)) %>%
@@ -315,7 +396,7 @@ exp2_long_water_time_acc <- exp2_data %>%
 
 exp2_mean_water_time_acc <- exp2_long_water_time_acc %>%
   select(DV) %>%
-  rename("WTA" = "DV")
+  dplyr::rename("water_time_acc" = "DV")
 
 condition <- exp2_long_aiming %>%
   select(P_ID, eye_condition)
@@ -425,26 +506,26 @@ TwoMinusOne = TwoFilter[,3:10] - OneFilter[,3:10]
 TwoMinusOne$change <- ("TwoMinusOne")
 TwoMinusOne$P_ID <- (NoFilter$P_ID)
 
-OMN_cor <- rcorr((as.matrix(OneMinusNone[,1:8])))
+OMN_cor <- rcorr((as.matrix(OneMinusNone[,1:8])), type = "spearman")
 OMN_corplot <- corrplot.mixed(OMN_cor$r, order="hclust",
          p.mat = OMN_cor$P, sig.level = 0.05, insig = "blank")
 
-TMN_cor <- rcorr((as.matrix(TwoMinusNone[,1:8])))
+TMN_cor <- rcorr((as.matrix(TwoMinusNone[,1:8])), type = "spearman")
 TMN_corplot <- corrplot.mixed(TMN_cor$r, order="hclust",
                               p.mat = TMN_cor$P, sig.level = 0.05, insig = "blank")
 
-TMO_cor <- rcorr((as.matrix(TwoMinusOne[,1:8])))
+TMO_cor <- rcorr((as.matrix(TwoMinusOne[,1:8])), type = "spearman")
 TMO_corplot <- corrplot.mixed(TMO_cor$r, order="hclust",
                                   p.mat = TMO_cor$P, sig.level = 0.05, insig = "blank")
 
 exp2_ALL_CHANGE <- rbind(OneMinusNone, TwoMinusOne, TwoMinusOne)
-AC_cor <- rcorr((as.matrix(exp2_ALL_CHANGE[, 1:8])))
+AC_cor <- rcorr((as.matrix(exp2_ALL_CHANGE[, 1:8])), type = "spearman")
 AC_corplot <- corrplot.mixed(AC_cor$r, order="hclust", upper = "ellipse", lower = "number",
                               p.mat = AC_cor$P, sig.level = 0.05, insig = "blank")
 
 
-ggsave(filename = "C:/Users/wills/Documents/Cataract/Figures/CorrPlot.png", dpi = 800, height = 6, width = 7)
+#ggsave(filename = "C:/Users/wills/Documents/Cataract/Figures/CorrPlot.png", dpi = 800, height = 6, width = 7)
 
-"C:/Users/wills/Documents/Cataract/Data"
-write.csv(ALL_CHANGE,"exp2_ALL_CHANGE.csv", row.names = F)
+#"C:/Users/wills/Documents/Cataract/Data"
+write.csv(exp2_ALL_CHANGE,"C:/Users/wills/Documents/Cataract/Data/exp2_ALL_CHANGE.csv", row.names = F)
 
