@@ -1,0 +1,91 @@
+---
+title: "Correlation Analysis"
+author: "William Sheppard"
+date: "14/02/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(plyr)
+library(tidyverse)
+library(Hmisc)
+library(corrplot)
+library(ggpubr)
+library(grid)
+library(knitr)
+
+setwd("C:/Users/wills/Documents/Cataract/Analysis/cataract")
+
+source("CorrelationAnalysis.R")
+```
+
+# Experiment 1
+
+Change in all visual and task outcomes were calculated between visual conditions i.e. both vs worse, both versus better, better versus worse. 
+All variables were subject to a Spearman's rank correlation, results are displayed below in *Fig X*. 
+No variables showed marginal significance. 
+Intercorrelations between motor measures are not reported here.
+Spearman's correlation was choosen as these data were not normally distributed.
+
+```{r e1Cor}
+
+# ++++++++++++++++++++++++++++
+# flattenCorrMatrix
+# ++++++++++++++++++++++++++++
+# cormat : matrix of the correlation coefficients
+# pmat : matrix of the correlation p-values
+flattenCorrMatrix <- function(cormat, pmat) {
+  ut <- upper.tri(cormat)
+  data.frame(
+    row = rownames(cormat)[row(cormat)[ut]],
+    column = rownames(cormat)[col(cormat)[ut]],
+    cor  =(cormat)[ut],
+    p = pmat[ut]
+    )
+}
+
+exp1_flat_matrix <- flattenCorrMatrix(exp1_change_cor$r, exp1_change_cor$P)
+
+kable(exp1_flat_matrix[c(4, 11, 22),], caption = "Spearman's Correlation Matrix", digits = 3)
+```
+
+A higher LogMAR value is indicative that the change to visual condition has made VA worse.
+Results of the Spearman correlation indicated that there was a significant positive association between increasing LogMAR scores and increased Tracking RMSE with no guide at fast speed (*rs*(212) = .17, *p* = .012), and with a guide at medium speed (*rs*(212) = .16, *p* = .021).
+
+```{r e1TrackingNGPlot}
+exp1_change_VA_trackingNG
+```
+
+```{r e1TrackingWGPlot}
+exp1_change_VA_trackingWG
+```
+
+The Spearman's correlation also indicated that there was a significant positive association between increasing LogMAR scores and movememnt time (s) in the aiming task (*rs*(212) = .15, *p* = .034).
+
+```{r e1AimingPlot}
+exp1_change_VA_aiming
+```
+
+# Experiment 2
+
+All significant, or marginally significant results of a Spearman's correlation are displayed below in *Fig X*.
+Intercorrelations between motor measures are not reported here.
+
+```{r e2Cor}
+exp2_flat_matrix <- flattenCorrMatrix(AC_cor$r, AC_cor$P)
+
+kable(exp2_flat_matrix[c(5, 9, 16, 18),], caption = "Spearman's Correlation Matrix", digits = 3)
+
+```
+
+A negative value for stereoacuity indicates that the manipulation has made stereoacuity worse, where as a higher value for change to pouring time is indicative of worse performance i.e. the particiapnt has taken longer to complete the task.
+The Spearman's correlation also indicated that there was a significant negative association between change in stereoacuity scores and pouring time (s) in the aiming task (*rs*(89) = -.21, *p* = .043)
+```{r e2Plots}
+
+exp2_change_stereo_pouringtime
+
+```
