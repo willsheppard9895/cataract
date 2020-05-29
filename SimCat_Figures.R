@@ -7,6 +7,8 @@ library(tidyverse)
 library(cowplot)
 library (ggpubr)
 library(tinytex)
+library(gridExtra)
+library(rstatix)
 
 rm(list = ls()) #clears all variables from workspace
 
@@ -16,6 +18,9 @@ setwd("C:/Users/wills/Documents/Cataract/Data")
 
 #reading the data
 all_data <- read.csv("AllData_forJASP.csv")
+
+# participants 12, 17, 19, 20, 23, 25, 26 violated VA or CS normal limits
+all_data <- all_data[-c(12, 17, 19, 20, 23, 25, 26), ]
 
 #all_data$eye_condition <- factor(Aiming_data_summary$eye_condition, levels=c("Worse","Better","Both"))
 
@@ -97,7 +102,7 @@ summary <- function(df_long, grouping_var){
 
   summary_df <- df_long %>%
   group_by(!!grouping_var)%>%
-    summarise(mean_DV = mean(DV), 
+    dplyr::summarise(mean_DV = mean(DV), 
               sd = sd(DV), 
               n = n(), 
               se = sd/sqrt(n))%>%
@@ -116,6 +121,7 @@ WaterAcc_data_summary <- summary(WaterAcc_data_long, quo(eye_condition))
 WaterTimebyAcc_data_summary <- summary(WaterTimebyAcc_data_long, quo(eye_condition))
 
 
+
 Aiming_data_summary$eye_condition <- factor(Aiming_data_summary$eye_condition, levels=c("NoFilter","1_Filter","2_Filter"))
 VA_data_summary$eye_condition <- factor(VA_data_summary$eye_condition, levels=c("NoFilter","1_Filter","2_Filter"))
 CS_data_summary$eye_condition <- factor(CS_data_summary$eye_condition, levels=c("NoFilter","1_Filter","2_Filter"))
@@ -124,6 +130,25 @@ Pegboard_data_summary$eye_condition <- factor(Pegboard_data_summary$eye_conditio
 WaterTime_data_summary$eye_condition <- factor(WaterTime_data_summary$eye_condition, levels=c("NoFilter","1_Filter","2_Filter"))
 WaterAcc_data_summary$eye_condition <- factor(WaterAcc_data_summary$eye_condition, levels=c("NoFilter","1_Filter","2_Filter"))
 WaterTimebyAcc_data_summary$eye_condition <- factor(WaterTimebyAcc_data_summary$eye_condition, levels=c("NoFilter","1_Filter","2_Filter"))
+
+VA_data_long$P_ID <- as.factor(VA_data_long$P_ID)
+
+VA_data_long %>% group_by(eye_condition) %>%
+  dplyr::summarise(
+    count = n(),
+    mean = mean(DV, na.rm = TRUE),
+    sd = sd(DV, na.rm = TRUE)
+  )
+
+# Compute the analysis of variance
+#res.aov <- aov(DV ~ eye_condition, data = Aiming_data_long)
+res.aov <- VA_data_long %>%
+  anova_test(dv = DV, wid = P_ID, within = eye_condition)
+get_anova_table(res.aov) 
+
+# Pairwise comparisons
+pwc <- CS_data_long %>% tukey_hsd(DV ~ eye_condition)
+pwc
 
 
 # the next bunch of lines contain the formatting details for the plotting. you can embed this within the code for each plot, 
@@ -182,7 +207,7 @@ SumPlot <- function(df, min = 0, max = 20, x = "blank", y_lab = "mean MT (s)"){
     geom_hline(linetype = x, yintercept = 0) +
     scale_x_discrete(labels = c("No Filter", "1 Filter", "2 Filters"))
   
-  ggsave(filename = paste(df,"_exp2.png", sep = ""), dpi = 800, height = 4, width = 6)
+  ggsave(filename = paste(df,"_exp1.png", sep = ""), dpi = 800, height = 4, width = 6)
   
   return(plot)
 }
@@ -199,7 +224,7 @@ WA_Plot <- SumPlot(WaterAcc_data_summary, 5, 25, y_lab = "Accuracy (ml)")
 WTA_Plot <- SumPlot(WaterTimebyAcc_data_summary, 100, 350, y_lab = "Time x Accuracy (s/ml)")
 #show(WTA_Plot)
 
-SumPlot_NB <- function(df, min = 0, max = 20, x = "blank", y_lab = "mean MT (s)", lab){
+SumPlot_NB <- function(df, min = 0, max = 20, x = "blank", y_lab = "mean MT (s)"){
   # Creates summary plots, min, max and title defined ot allow quick examination
   plot <-  ggplot(data = df, aes(x=eye_condition, y=mean_DV, fill=eye_condition)) +
     coord_cartesian(ylim = c(min , max)) + #change coordinates for each test
@@ -216,27 +241,38 @@ SumPlot_NB <- function(df, min = 0, max = 20, x = "blank", y_lab = "mean MT (s)"
     geom_hline(linetype = x, yintercept = 0) +
     scale_x_discrete(labels = c("No Filter", "1 Filter", "2 Filters"))
   
-  ggsave(filename = paste(lab,"_exp2.png", sep = ""), dpi = 800, height = 4, width = 6)
+  #ggsave(filename = paste(lab,"_exp2.png", sep = ""), dpi = 800, height = 4, width = 6)
+  # TO SAVE - UNCOMMENT ABOVE AND ADD LAB TO FUNCITON
   
   return(plot)
 }
 
 #setwd("C:/Users/wills/Documents/Cataract/Figures")
 
-Aiming_Plot_NB <- SumPlot_NB(Aiming_data_summary, 0.5, 1.5, lab = "Aiming_NB")
-VA_Plot_NB <- SumPlot_NB(VA_data_summary, -0.1, .4, lab = "VisualAcuity_NB", x = "solid", y_lab = "logMAR")
-CS_Plot_NB <- SumPlot_NB(CS_data_summary, 7.5, 15, lab = "ConstrastSensitivity_NB", y_lab = "Hamilton-Veale Test Score")
-Stereo_Plot_NB <- SumPlot_NB(Stereo_data_summary, 0, 8, lab = "Steroacuity_NB", y_lab = "Titmus Stereo Fly Test Score")
-PB_Plot_NB <- SumPlot_NB(Pegboard_data_summary, 12, 16, lab = "Pegboard_NB", y_lab = "Correct Placements")
-WT_Plot_NB <- SumPlot_NB(WaterTime_data_summary, 12, 18, lab = "WaterPouring-Time_NB", y_lab = "Time (s)") 
-WA_Plot_NB <- SumPlot_NB(WaterAcc_data_summary, 5, 25, lab = "WaterPouringAccuracy_NB", y_lab = "Accuracy (ml)")
-WTA_Plot_NB <- SumPlot_NB(WaterTimebyAcc_data_summary, 100, 350, lab = "WaterpouringTimebyaccuracy_NB", y_lab = "Time x Accuracy (s/ml)")
+Aiming_Plot_NB <- SumPlot_NB(Aiming_data_summary, 0.5, 1.5)#, lab = "Aiming_NB")
+VA_Plot_NB <- SumPlot_NB(VA_data_summary, -0.1, .4, x = "solid", y_lab = "logMAR")#, lab = "VisualAcuity_NB"
+CS_Plot_NB <- SumPlot_NB(CS_data_summary, 7.5, 15, y_lab = "Hamilton-Veale Test Score")#, lab = "ConstrastSensitivity_NB"
+Stereo_Plot_NB <- SumPlot_NB(Stereo_data_summary, 0, 8, y_lab = "Titmus Stereo Fly Test Score")#, lab = "Steroacuity_NB"
+PB_Plot_NB <- SumPlot_NB(Pegboard_data_summary, 12, 16, y_lab = "Correct Placements")#, lab = "Pegboard_NB"
+WT_Plot_NB <- SumPlot_NB(WaterTime_data_summary, 12, 18, y_lab = "Time (s)")#, lab = "WaterPouring-Time_NB" 
+WA_Plot_NB <- SumPlot_NB(WaterAcc_data_summary, 5, 25, y_lab = "Accuracy (ml)")#, lab = "WaterPouringAccuracy_NB"
+WTA_Plot_NB <- SumPlot_NB(WaterTimebyAcc_data_summary, 100, 350, y_lab = "Time x Accuracy (s*ml)")#, lab = "WaterpouringTimebyaccuracy_NB"
 
 #show(WTA_Plot_NB)
 
-##setwd("C:/Users/wills/Documents/Cataract/Figures")
+VM <- ggarrange(VA_Plot_NB + rremove("x.text") + rremove("x.title"), CS_Plot_NB + rremove("x.text") + rremove("x.title"), Stereo_Plot_NB,
+                labels = c("A", "B", "C"),
+                ncol = 1, nrow = 3,
+                align = "v")
+
+WP <- ggarrange(WT_Plot_NB + rremove("x.text") + rremove("x.title"), WA_Plot_NB + rremove("x.text") + rremove("x.title"), WTA_Plot_NB,
+                labels = c("A", "B", "C"),
+                ncol = 1, nrow = 3,
+                align = "v")
+
+setwd("C:/Users/wills/Documents/Cataract/Figures")
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")
-#ggsave("2Aiming.png", dpi = 800, height = 5, width = 6)
+ggsave("Exp1_WaterPouring.png", dpi = 800, height = 9, width = 6)
 
 
