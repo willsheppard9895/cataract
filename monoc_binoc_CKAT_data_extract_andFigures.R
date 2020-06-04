@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # this script takes CKAT data seperates into tracking, aiming and steering
 # and formats first for exporting to JASP then makes figures
 # line 145 need to work out why tracking data RMSE means aren't calculating (median is fine)
@@ -147,14 +147,46 @@ Steering_data_long <- df_wide_All_CKAT %>%
 # obtain group summary stats to make figures #### throwing error ####
 
 
-
-Tracking_data_summary <- Tracking_data_long%>% 
-  group_by(eye_condition,guide,speed)%>%
+# Tracking
+Tracking_data_summary <- Tracking_data_long %>% 
+  group_by(eye_condition, guide, speed) %>%
   dplyr::summarise(mean_RMSE = mean(RMSE), #why wont mean work but median will?
             sd = sd(RMSE), 
             n = dplyr::n(), 
             se = sd/sqrt(n))%>%
-  ungroup()
+  ungroup() %>%
+  rename("Speed" = "speed")
+
+# the below lines rename the levels, and reorder them (as R defaults to alphabetical order)
+Tracking_data_summary$speed <- revalue(Tracking_data_summary$Speed,
+                                       c("Medi" = "Medium"))
+Tracking_data_summary$guide <- revalue(Tracking_data_summary$guide,
+                                       c("NG" = "No Guide", "WG" = "With Guide"))
+Tracking_data_summary$speed <- factor(Tracking_data_summary$Speed, levels=c("Slow","Medium","Fast")) # this says reorder to slow, med, fast
+Tracking_data_summary$eye_condition <- factor(Tracking_data_summary$eye_condition, levels=c("Worse","Better","Both"))
+
+Tracking_data_NG <- Tracking_data_summary  %>%
+  filter(guide=="No Guide")
+
+Tracking_data_WG <- Tracking_data_summary %>%
+  filter(guide=="With Guide")
+
+# Steering
+
+Steering_data_summary <- Steering_data_long%>%
+  group_by(eye_condition,shape)%>%
+  dplyr::summarise(mean_pPA = mean(pPA), 
+                   sd = sd(pPA), 
+                   n = dplyr::n(), 
+                   se = sd/sqrt(n))%>%
+  ungroup() %>%
+  rename("Shape" = "shape") %>%
+  mutate(Shape = ifelse(as.character(Shape) == "A", "Path A", "Path B"))
+
+Steering_data_summary$eye_condition <- factor(Steering_data_summary$eye_condition, levels=c("Worse","Better","Both"))
+
+
+# Aiming
 
 Aiming_data_summary <- Aiming_data_long%>%
   group_by(eye_condition)%>%
@@ -164,34 +196,8 @@ Aiming_data_summary <- Aiming_data_long%>%
             se = sd/sqrt(n))%>%
   ungroup()
 
-Steering_data_summary <- Steering_data_long%>%
-  group_by(eye_condition,shape)%>%
-  dplyr::summarise(mean_pPA = mean(pPA), 
-            sd = sd(pPA), 
-            n = dplyr::n(), 
-            se = sd/sqrt(n))%>%
-  ungroup()
-
-### not doing this anymore for some reason
-# R was treating eye_condition as a numerical variable so we had to convert it to a factor
-#Tracking_data_summary$eye_condition <- as.factor(Tracking_data_summary$eye_condition)
-#Aiming_data_summary$eye_condition <- as.factor(Aiming_data_summary$eye_condition)
-#Steering_data_summary$eye_condition <- as.factor(Steering_data_summary$eye_condition)
-
-# the below lines rename the levels, and reorder them (as R defaults to alphabetical order)
-Tracking_data_summary$speed <- revalue(Tracking_data_summary$speed,
-                                       c("Medi" = "Medium"))
-Tracking_data_summary$guide <- revalue(Tracking_data_summary$guide,
-                                       c("NG" = "No Guide", "WG" = "With Guide"))
-Tracking_data_summary$speed <- factor(Tracking_data_summary$speed, levels=c("Slow","Medium","Fast")) # this says reorder to slow, med, fast
-Tracking_data_summary$eye_condition <- factor(Tracking_data_summary$eye_condition, levels=c("Worse","Better","Both"))
-
-Steering_data_summary$shape <- revalue(Steering_data_summary$shape,
-                                       c("A" = "Path_A", "B" = "Path_B"))
-Steering_data_summary$eye_condition <- factor(Steering_data_summary$eye_condition, levels=c("Worse","Better","Both"))
 
 Aiming_data_summary$eye_condition <- factor(Aiming_data_summary$eye_condition, levels=c("Worse","Better","Both"))
-
 
 # the next bunch of lines contain the formatting details for the plotting. you can embed this within the code for each plot, 
 # but that would be repetitive as we're using the same formatting across the plots.
@@ -226,19 +232,7 @@ calc <- theme_cowplot() + theme(axis.title = element_text(size = 11),
 theme_set(calc)
 
 
-# rename column speed to Speed
-Tracking_data_summary <- Tracking_data_summary %>%
-  rename("Speed" = "speed")
-
-#this is the code that draws the plot itself
-Tracking_data_NG <- Tracking_data_summary  %>%
-  filter(guide=="No Guide")
-
-Tracking_data_WG <- Tracking_data_summary %>%
-  filter(guide=="With Guide")
-
-
-## create plots
+## Tracking plots 
 plot1 <- ggplot(Tracking_data_NG, aes(x = eye_condition, y = mean_RMSE,
                                      shape = Speed, color = Speed, fill = Speed, group = Speed)) + # add a + to the end of this line if not naming plots and remove plot <- and plot1 <- from next line
   geom_line(aes(linetype = Speed), alpha = .8, position = pd, size = ls) +  # if you want to remove the lines, hash out this line
@@ -253,7 +247,7 @@ plot1 <- ggplot(Tracking_data_NG, aes(x = eye_condition, y = mean_RMSE,
   scale_shape_manual(values = c(21, 22, 23)) +
   labs(x = "Visual Condition", y= "mean RMSE", tag = "No Guide") + 
   theme(legend.position = c(0.7, 0.85), legend.title = element_text(size = 11),
-        legend.text = element_text(size = 10), plot.tag.position = c(0.2, 1))
+        plot.tag = element_text(size = 11), plot.tag.position = c(0.2, 1))
 #show(plot1)
 
 
@@ -270,7 +264,7 @@ plot2 <- ggplot(Tracking_data_WG, aes(x = eye_condition, y = mean_RMSE,
   scale_color_grey(start = .05, end = .5) +
   scale_shape_manual(values = c(21, 22, 23)) +
   labs(x = "Visual Condition", y= "mean RMSE", tag = "With Guide") +
-  theme(legend.position = "none", plot.tag.position = c(0.1, 1))
+  theme(legend.position = "none", plot.tag = element_text(size = 11), plot.tag.position = c(0.1, 1))
 #show(plot2)
 
 
@@ -293,10 +287,11 @@ ggsave("Tracking.png", dpi = 800, height = 4, width = 6)
 
 ## ----mb_steering_plot--------
 
+
 #Steering
 Steering_plot <- ggplot(Steering_data_summary, aes(x = eye_condition, y = mean_pPA,
-                                                   shape = shape, color = shape, fill = shape, group = shape)) + # add a + to the end of this line if not naming plots and remove plot <- and plot1 <- from next line
-  geom_line(aes(linetype = shape), alpha = .8, position = pd) + # if you want to remove the lines, hash out this line
+                                                   shape = Shape, color = Shape, fill = Shape, group = Shape)) + # add a + to the end of this line if not naming plots and remove plot <- and plot1 <- from next line
+  geom_line(aes(linetype = Shape), alpha = .8, position = pd) + # if you want to remove the lines, hash out this line
   coord_cartesian(ylim = c(0.7,1.0)) + # this is the y axis c(0,1) means zero to 1. 
   scale_y_continuous(expand = c(0, 0)) + # this means bars start at 0 without a weird gap at the bottom
   geom_errorbar(width = 0.2, position = pd, size = es, alpha = .8, color = "black",
@@ -307,14 +302,14 @@ Steering_plot <- ggplot(Steering_data_summary, aes(x = eye_condition, y = mean_p
   scale_fill_grey(start = .05, end = .5) +
   scale_color_grey(start = .05, end = .5) +
   scale_shape_manual(values = c(21, 24)) +
-  labs(x = "Visual Condition", y= "Mean penalised path accuracy") + 
-  theme(legend.position = c(0.7, 0.7), legend.title = element_text(size = 15),
-        legend.text = element_text(size = 15))
+  labs(x = "Visual Condition", y= "mean pPA") + 
+  theme(legend.position = c(0.7, 0.7), legend.title = element_text(size = 11),
+        legend.text = element_text(size = 11))
 
 show(Steering_plot)
 
 
-setwd("C:/Users/wills/Documents/Cataract/Figures")
+setwd("C:/Users/wills/Documents/Cataract/Figures/General/Monoc_Binoc")
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Will_Paper/Figures")
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Will_Paper/Figures")
 ggsave("Steering.png", dpi = 800, height = 4, width = 6)
