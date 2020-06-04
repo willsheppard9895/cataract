@@ -225,6 +225,11 @@ calc <- theme_cowplot() + theme(axis.title = element_text(size = 11),
 
 theme_set(calc)
 
+
+# rename column speed to Speed
+Tracking_data_summary <- Tracking_data_summary %>%
+  rename("Speed" = "speed")
+
 #this is the code that draws the plot itself
 Tracking_data_NG <- Tracking_data_summary  %>%
   filter(guide=="No Guide")
@@ -234,10 +239,9 @@ Tracking_data_WG <- Tracking_data_summary %>%
 
 
 ## create plots
-
 plot1 <- ggplot(Tracking_data_NG, aes(x = eye_condition, y = mean_RMSE,
-                                     shape = speed, color = speed, fill = speed, group = speed)) + # add a + to the end of this line if not naming plots and remove plot <- and plot1 <- from next line
-  geom_line(aes(linetype = speed), alpha = .8, position = pd, size = ls) +  # if you want to remove the lines, hash out this line
+                                     shape = Speed, color = Speed, fill = Speed, group = Speed)) + # add a + to the end of this line if not naming plots and remove plot <- and plot1 <- from next line
+  geom_line(aes(linetype = Speed), alpha = .8, position = pd, size = ls) +  # if you want to remove the lines, hash out this line
   coord_cartesian(ylim = c(0,30)) + # this is the y axis c(0,1) means zero to 1.
   scale_y_continuous(expand = c(0, 0)) + # this means bars start at 0 without a weird gap at the bottom
   geom_errorbar(width = 0.2, position = pd, size = es, alpha = .8, color = "black",
@@ -247,15 +251,15 @@ plot1 <- ggplot(Tracking_data_NG, aes(x = eye_condition, y = mean_RMSE,
   scale_fill_grey(start = .05, end = .5) +
   scale_color_grey(start = .05, end = .5) +
   scale_shape_manual(values = c(21, 22, 23)) +
-  labs(x = "Visual Condition", y= "Mean RMSE") + 
+  labs(x = "Visual Condition", y= "mean RMSE", tag = "No Guide") + 
   theme(legend.position = c(0.7, 0.85), legend.title = element_text(size = 11),
-        legend.text = element_text(size = 10))
+        legend.text = element_text(size = 10), plot.tag.position = c(0.2, 1))
 #show(plot1)
 
 
 plot2 <- ggplot(Tracking_data_WG, aes(x = eye_condition, y = mean_RMSE,
-                                     shape = speed, color = speed, fill = speed, group = speed)) + # add a + to the end of this line if not naming plots and remove plot <- and plot1 <- from next line
-  geom_line(aes(linetype = speed), alpha = .8, position = pd, size = ls) +  # if you want to remove the lines, hash out this line
+                                     shape = Speed, color = Speed, fill = Speed, group = Speed)) + # add a + to the end of this line if not naming plots and remove plot <- and plot1 <- from next line
+  geom_line(aes(linetype = Speed), alpha = .8, position = pd, size = ls) +  # if you want to remove the lines, hash out this line
   coord_cartesian(ylim = c(0,30)) + # this is the y axis c(0,1) means zero to 1.
   scale_y_continuous(expand = c(0, 0)) + # this means bars start at 0 without a weird gap at the bottom
   geom_errorbar(width = 0.2, position = pd, size = es, alpha = .8, color = "black",
@@ -265,28 +269,27 @@ plot2 <- ggplot(Tracking_data_WG, aes(x = eye_condition, y = mean_RMSE,
   scale_fill_grey(start = .05, end = .5) +
   scale_color_grey(start = .05, end = .5) +
   scale_shape_manual(values = c(21, 22, 23)) +
-  labs(x = "Visual Condition", y= "Mean RMSE") + 
-  theme(legend.position = c(0.7, 0.5), legend.title = element_text(size = 20),
-        legend.text = element_text(size = 20))
+  labs(x = "Visual Condition", y= "mean RMSE", tag = "With Guide") +
+  theme(legend.position = "none", plot.tag.position = c(0.1, 1))
 #show(plot2)
 
 
 ## ----mb_trackinging_plot--------
 # this pastes the 2 tracking plots together on one figure
 tracking_plot <- ggarrange(plot1, plot2 + rremove("ylab") + rremove("y.text") + rremove("legend"),
-                    labels = c("No Guide", "With Guide"), hjust = -1.0, vjust = 1.0, # hjust and vjust move the position of the label (horiz and vertical). Smaller numbers mean further right and down
+                    #labels = c("No Guide", "With Guide"), hjust = -1.0, vjust = 1.0, # hjust and vjust move the position of the label (horiz and vertical). Smaller numbers mean further right and down
                     font.label = list(size = 11, color= "black"),
                     ncol = 2, nrow = 1,
                     align = "h"
-                    )#+ theme(legend.position = c(0, 0.5))
+                    ) 
 
 #common.legend = TRUE, legend = "bottom") # also need to change legend to "horizontal" in calc section
-#show(figure)
+show(tracking_plot)
 
 
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Will_Paper/Figures")
-setwd("C:/Users/wills/Documents/Cataract/Figures")
-ggsave("Tracking.png", dpi = 800, height = 8, width = 10)
+setwd("C:/Users/wills/Documents/Cataract/Figures/General/Monoc_Binoc")
+ggsave("Tracking.png", dpi = 800, height = 4, width = 6)
 
 ## ----mb_steering_plot--------
 
