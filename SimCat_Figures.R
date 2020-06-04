@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # to make figures
 # still need to work out how to remove legend as it's not helpful, but retain dots/markers
 
@@ -131,25 +130,6 @@ Pegboard_data_summary$eye_condition <- factor(Pegboard_data_summary$eye_conditio
 WaterTime_data_summary$eye_condition <- factor(WaterTime_data_summary$eye_condition, levels=c("NoFilter","1_Filter","2_Filter"))
 WaterAcc_data_summary$eye_condition <- factor(WaterAcc_data_summary$eye_condition, levels=c("NoFilter","1_Filter","2_Filter"))
 WaterTimebyAcc_data_summary$eye_condition <- factor(WaterTimebyAcc_data_summary$eye_condition, levels=c("NoFilter","1_Filter","2_Filter"))
-
-VA_data_long$P_ID <- as.factor(VA_data_long$P_ID)
-
-VA_data_long %>% group_by(eye_condition) %>%
-  dplyr::summarise(
-    count = n(),
-    mean = mean(DV, na.rm = TRUE),
-    sd = sd(DV, na.rm = TRUE)
-  )
-
-# Compute the analysis of variance
-#res.aov <- aov(DV ~ eye_condition, data = Aiming_data_long)
-res.aov <- VA_data_long %>%
-  anova_test(dv = DV, wid = P_ID, within = eye_condition)
-get_anova_table(res.aov) 
-
-# Pairwise comparisons
-pwc <- CS_data_long %>% tukey_hsd(DV ~ eye_condition)
-pwc
 
 
 # the next bunch of lines contain the formatting details for the plotting. you can embed this within the code for each plot, 
@@ -498,7 +478,7 @@ Aiming_Plot <- SumPlot(Aiming_data_summary, 0.5, 1.5)
 VA_Plot <- SumPlot(VA_data_summary, -0.1, .4, x = "solid", y_lab = "logMAR")
 CS_Plot <- SumPlot(CS_data_summary, 7.5, 15, y_lab = "Hamilton-Veale Test Score")
 Stereo_Plot <- SumPlot(Stereo_data_summary, 0, 8, y_lab = "Titmus Stereo Fly Test Score")
-PB_Plot <- SumPlot(Pegboard_data_summary, 12, 16, y_lab = "Correct Placements")
+PB_Plot <- SumPlot(Pegboard_data_summary, 12, 16, y_lab = "Correct Peg Placements")
 WT_Plot <- SumPlot(WaterTime_data_summary, 12, 18, y_lab = "Time (s)") 
 WA_Plot <- SumPlot(WaterAcc_data_summary, 5, 25, y_lab = "Accuracy (ml)")
 WTA_Plot <- SumPlot(WaterTimebyAcc_data_summary, 100, 350, y_lab = "Time x Accuracy (s/ml)")
