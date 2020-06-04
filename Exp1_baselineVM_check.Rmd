@@ -1,0 +1,79 @@
+---
+title: "Visual Measures Check - Cataract Exp 1"
+author: "William Sheppard"
+date: "21/05/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(tidyverse)
+```
+
+Rigmoor added a comment to the paper that got me thinking:
+Participants were aged 18 – 23 years old (mean = 19.37, SD = 1.22), five participants were left-handed. Participants were required to be 18 years old or over and have normal or corrected-to-normal eyesight (**logMAR <= 0.00?**).
+
+This got me thinking - do any of our participants have particularly poor 
+
+```{r import dataset}
+setwd("C:/Users/wills/Documents/Cataract/Data")
+all_data <- read.csv("AllData_forJASP.csv")
+```
+
+
+# Summary of No Filter (baseline) VA data
+One sample t-test - Is the data sig. different from 0?
+From these tests we can infer:
+  Baseline VA data was normally distributed in this sample and did not significantly differ from zero
+```{r VA}
+VA_sum <- summary(all_data$VA_NoFilter)
+VA_upper_bound <- sd(all_data$VA_NoFilter)
+
+show(VA_sum)
+show(VA_upper_bound)
+```
+
+## Did any participants have baseline VA sig. greater than 0?
+```{r Over zero}
+high_VA <- all_data %>%
+  filter(VA_NoFilter > VA_upper_bound)
+
+```
+Participants with baseline VA greater than `r round(VA_upper_bound, digits = 3)` cannot be considered as having normal/corrected to normal vision,
+this would suggest that particiapnts: `r  high_VA$P_ID` have a VA sig. greater than 0, and should be included in our results?
+
+# Summary of No Filter (baseline) Stereoacuity data
+
+```{r Stereo}
+Stereo_sum <- summary(all_data$Stereo_NoFilter)
+
+
+show(Stereo_sum)
+
+
+low_stereo <- all_data %>%
+  filter(Stereo_NoFilter < 4)
+```
+Individuals who score 3 or less on the Wirt circles test are considered stereoblind (stereoacuity worse than 140 seconds of arc),
+
+Our data would suggest that participants: `r low_stereo$P_ID` meet the criteria for stereoblindness and it may not be appropriate to include them in further anaysis
+
+
+# Summary of No Filter (baseline) CS data
+```{r CS}
+CS_sum <- summary(all_data$CS_NoFilter)
+
+
+show(CS_sum)
+
+
+```
+Normal range of CS scores = 12-14
+Small range of results, therefore no participants will be excluded based on their CS scores
+
+```{r}
+PP_exclude <- unique(c(high_VA$P_ID, low_stereo$P_ID))
+#show(PP_exclude)
+```
+Therefore, participants `r PP_exclude` baseline scores cannot be considered representitive and may there need to be removed from further analysis.

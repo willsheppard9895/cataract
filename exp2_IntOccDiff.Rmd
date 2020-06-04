@@ -1,0 +1,640 @@
+---
+title: "exp2_IntOccDiff"
+author: "William Sheppard"
+date: "29/05/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+# This script investigates the effect of removing participants with no interocular difference or large interocular difference on CKAT measures
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(root.dir = "C:/Users/wills/Documents/Cataract/Data")
+library(tidyverse)
+library(ggpubr)
+library(rstatix)
+```
+
+```{r import data}
+# import data
+all_data <- read.csv("C:/Users/wills/Documents/Cataract/Data/exp1_wide_ALL_MEASURES.csv") 
+
+# Filter participants with no IOdiff
+nodiff_data <- all_data %>%
+  filter(LogMAR_EyeDifference != 0)
+
+bigdiff_data <- all_data %>%
+  filter(LogMAR_EyeDifference <= 0.2)
+
+diff_data <- all_data %>%
+  filter(LogMAR_EyeDifference > 0.2)
+```
+data: data frame
+dv: (numeric) the dependent (or outcome) variable name.
+wid: variable name specifying the case/sample identifier.
+within: within-subjects factor or grouping variable
+
+
+# Aiming
+One-way repeated measures anova
+dv = MT
+wid = P_ID_
+within = visual condition
+
+## All data
+```{r Aiming all data}
+aiming_data <- all_data %>%
+  select(P_ID_, Aiming_Worse:Aiming_Better) %>%
+  rename("Worse" = "Aiming_Worse",
+         "Better" = "Aiming_Better",
+         "Both" = "Aiming_Both")
+
+# gather columns to long format
+aiming_data <- aiming_data %>%
+  gather(key = "eye_condition", value = "MT", Worse, Both, Better) %>%
+  convert_as_factor(P_ID_, eye_condition) %>%
+  reorder_levels(eye_condition, order = c("Worse", "Better", "Both"))
+
+# Get summary statistics
+aiming_summary_stats <- aiming_data %>%
+  group_by(eye_condition) %>%
+  get_summary_stats(MT, type = "mean_sd")
+#aiming_summary_stats
+
+# Group boxplot
+aiming_bp <- ggplot(aiming_data, aes(x = eye_condition, y = MT)) +
+  geom_boxplot() 
+aiming_bp
+
+aiming_qq <- ggqqplot(aiming_data, "MT", facet.by = "eye_condition") # happy that data is normally distributed
+
+# Run ANOVA
+aiming.aov <- anova_test(data = aiming_data, 
+                         dv = MT, 
+                         wid = P_ID_, 
+                         within = eye_condition,
+                         effect.size = "pes")
+get_anova_table(aiming.aov)
+
+# pairwise comparison
+aiming_pwc <- aiming_data %>%
+  pairwise_t_test(
+    MT ~ eye_condition, paired = TRUE,
+    p.adjust.method = "holm"
+  )
+aiming_pwc
+
+aiming_cohens_d <- aiming_data %>%
+  cohens_d(MT ~ eye_condition, paired = TRUE)
+aiming_cohens_d
+```
+
+## Aiming - Interoccular difference == 0.0 logMAR removed
+results are almost exactly the same as including all data!
+Effect sizes are slightly smaller after excluding data.
+```{r Aiming NoDiff data}
+aiming_nodiff <- nodiff_data %>%
+  select(P_ID_, Aiming_Worse:Aiming_Better) %>%
+  rename("Worse" = "Aiming_Worse",
+         "Better" = "Aiming_Better",
+         "Both" = "Aiming_Both")
+
+# gather columns to long format
+aiming_nodiff <- aiming_nodiff %>%
+  gather(key = "eye_condition", value = "MT", Worse, Both, Better) %>%
+  convert_as_factor(P_ID_, eye_condition) %>%
+  reorder_levels(eye_condition, order = c("Worse", "Better", "Both"))
+
+# Get summary statistics
+aiming_nodiff_summary_stats <- aiming_nodiff %>%
+  group_by(eye_condition) %>%
+  get_summary_stats(MT, type = "mean_sd")
+#aiming_nodiff_summary_stats
+
+# Group boxplot
+aiming_nodiff_bp <- ggplot(aiming_nodiff, aes(x = eye_condition, y = MT)) +
+  geom_boxplot() 
+aiming_nodiff_bp
+
+aiming_nodiff_qq <- ggqqplot(aiming_nodiff, "MT", facet.by = "eye_condition") # happy that data is normally distributed
+
+# Run ANOVA
+aiming_nodiff.aov <- anova_test(data = aiming_nodiff, 
+                         dv = MT, 
+                         wid = P_ID_, 
+                         within = eye_condition,
+                         effect.size = "pes")
+get_anova_table(aiming_nodiff.aov)
+
+# pairwise comparison
+aiming_nodiff_pwc <- aiming_nodiff %>%
+  pairwise_t_test(
+    MT ~ eye_condition, paired = TRUE,
+    p.adjust.method = "holm"
+  )
+aiming_nodiff_pwc
+
+aiming_nodiff_cohens_d <- aiming_nodiff %>%
+  cohens_d(MT ~ eye_condition, paired = TRUE)
+aiming_nodiff_cohens_d
+```
+
+
+## Aiming - Interoccular difference > 0.2 logMAR removed
+Compared to all data, effect size of better v both has increase from 0.44 to 0.51.
+Otherwise, results are largely the same.
+```{r Aiming BigDiff data}
+aiming_bigdiff <- bigdiff_data %>%
+  select(P_ID_, Aiming_Worse:Aiming_Better) %>%
+  rename("Worse" = "Aiming_Worse",
+         "Better" = "Aiming_Better",
+         "Both" = "Aiming_Both")
+
+# gather columns to long format
+aiming_bigdiff <- aiming_bigdiff %>%
+  gather(key = "eye_condition", value = "MT", Worse, Both, Better) %>%
+  convert_as_factor(P_ID_, eye_condition) %>%
+  reorder_levels(eye_condition, order = c("Worse", "Better", "Both"))
+
+# Get summary statistics
+aiming_bigdiff_summary_stats <- aiming_bigdiff %>%
+  group_by(eye_condition) %>%
+  get_summary_stats(MT, type = "mean_sd")
+aiming_bigdiff_summary_stats
+
+# Group boxplot
+aiming_bigdiff_bp <- ggplot(aiming_bigdiff, aes(x = eye_condition, y = MT)) +
+  geom_boxplot() 
+aiming_bigdiff_bp
+
+
+aiming_bigdiff_qq <- ggqqplot(aiming_bigdiff, "MT", facet.by = "eye_condition") # happy that data is normally distributed
+
+# Run ANOVA
+aiming_bigdiff.aov <- anova_test(data = aiming_bigdiff, 
+                         dv = MT, 
+                         wid = P_ID_, 
+                         within = eye_condition,
+                         effect.size = "pes")
+get_anova_table(aiming_bigdiff.aov)
+
+# pairwise comparison
+aiming_bigdiff_pwc <- aiming_bigdiff %>%
+  pairwise_t_test(
+    MT ~ eye_condition, paired = TRUE,
+    p.adjust.method = "holm"
+  )
+aiming_bigdiff_pwc
+
+aiming_bigdiff_cohens_d <- aiming_bigdiff %>%
+  cohens_d(MT ~ eye_condition, paired = TRUE)
+aiming_bigdiff_cohens_d
+```
+
+## Aiming - Interoccular difference < 0.2 logMAR removed
+No significant main effect of vision.
+Sample size is now much smaller - may exlain the lack of effect (N = 11)
+```{r Aiming Diff data}
+aiming_diff <- diff_data %>%
+  select(P_ID_, Aiming_Worse:Aiming_Better) %>%
+  rename("Worse" = "Aiming_Worse",
+         "Better" = "Aiming_Better",
+         "Both" = "Aiming_Both")
+
+# gather columns to long format
+aiming_diff <- aiming_diff %>%
+  gather(key = "eye_condition", value = "MT", Worse, Both, Better) %>%
+  convert_as_factor(P_ID_, eye_condition) %>%
+  reorder_levels(eye_condition, order = c("Worse", "Better", "Both"))
+
+# Get summary statistics
+aiming_diff_summary_stats <- aiming_diff %>%
+  group_by(eye_condition) %>%
+  get_summary_stats(MT, type = "mean_sd")
+#aiming_diff_summary_stats
+
+# Group boxplot
+aiming_diff_bp <- ggplot(aiming_diff, aes(x = eye_condition, y = MT)) +
+  geom_boxplot() 
+aiming_diff_bp
+
+
+aiming_diff_qq <- ggqqplot(aiming_diff, "MT", facet.by = "eye_condition") # happy that data is normally distributed
+#aiming_diff_qq
+
+# Run ANOVA
+aiming_diff.aov <- anova_test(data = aiming_diff, 
+                         dv = MT, 
+                         wid = P_ID_, 
+                         within = eye_condition,
+                         effect.size = "pes")
+get_anova_table(aiming_diff.aov)
+```
+
+# Steering
+## Two-way repeated measures anova
+dv = pPA
+wid = P_ID_
+within = visual condition, shape
+
+It appears that steering dat ais non-normally distributed for some conditions shape A - Worse and Better, shape B - Worse 
+All same results, i got different values for cohens d:
+better vs both = 0.28
+worse vs both = 0.33
+```{r Steering all data}
+steering_data <- all_data %>%
+  select(P_ID_, SteeringA_Worse:SteeringB_Both) %>%
+  rename("A_Worse" = "SteeringA_Worse",
+         "A_Better" = "SteeringA_Better",
+         "A_Both" = "SteeringA_Both",
+         "B_Worse" = "SteeringB_Worse",
+         "B_Better" = "SteeringB_Better",
+         "B_Both" = "SteeringB_Both")
+
+# gather columns to long format
+steering_data <- steering_data %>%
+  gather(key = "condition", value = "pPA", A_Worse, A_Better, A_Both, B_Worse, B_Better, B_Both) %>%
+  extract(condition, c("shape", "eye_condition"), "([[:alnum:]]+)_([[:alnum:]]+)") %>%
+  convert_as_factor(P_ID_, eye_condition) %>% 
+  reorder_levels(eye_condition, order = c("Worse", "Better", "Both"))
+
+steering_summary_stats <- steering_data %>%
+  group_by(shape, eye_condition) %>%
+  get_summary_stats(pPA, type = "mean_sd")
+#steering_summary_stats
+
+steering_bp <- ggplot(steering_data, aes(x = eye_condition, y = pPA, color = shape)) + 
+  geom_boxplot()
+steering_bp
+
+steering_qq <- ggqqplot(steering_data, "pPA", ggtheme = theme_bw()) +
+  facet_grid(eye_condition ~ shape, labeller = "label_both")
+steering_qq
+
+steering.aov <- anova_test(
+  data = steering_data,
+  dv = pPA,
+  wid = P_ID_,
+  within = c(eye_condition, shape),
+  effect.size = "pes"
+)
+get_anova_table(steering.aov)
+
+steering_pwc_eye <- steering_data %>%
+  pairwise_t_test(
+    pPA ~ eye_condition, paired = TRUE, 
+    p.adjust.method = "holm"
+    )
+steering_pwc_eye
+
+steering_cohens_d <- steering_data %>%
+  cohens_d(pPA ~ eye_condition, paired = TRUE)
+steering_cohens_d
+```
+
+## Steering - Interoccular difference == 0.0 logMAR removed
+It appears that steering dat ais non-normally distributed for some conditions shape A - Worse and Better, shape B - Worse 
+compared to all data, effect size of better v both has increased from 0.28 to 0.34
+```{r Steering NoDiff}
+steering_nodiff <- nodiff_data %>%
+  select(P_ID_, SteeringA_Worse:SteeringB_Both) %>%
+  rename("A_Worse" = "SteeringA_Worse",
+         "A_Better" = "SteeringA_Better",
+         "A_Both" = "SteeringA_Both",
+         "B_Worse" = "SteeringB_Worse",
+         "B_Better" = "SteeringB_Better",
+         "B_Both" = "SteeringB_Both")
+
+# gather columns to long format
+steering_nodiff <- steering_nodiff %>%
+  gather(key = "condition", value = "pPA", A_Worse, A_Better, A_Both, B_Worse, B_Better, B_Both) %>%
+  extract(condition, c("shape", "eye_condition"), "([[:alnum:]]+)_([[:alnum:]]+)") %>%
+  convert_as_factor(P_ID_, eye_condition) %>% 
+  reorder_levels(eye_condition, order = c("Worse", "Better", "Both"))
+
+steering_nodiff_summary_stats <- steering_nodiff %>%
+  group_by(shape, eye_condition) %>%
+  get_summary_stats(pPA, type = "mean_sd")
+#steering_nodiff_summary_stats
+
+steering_nodiff_bp <- ggplot(steering_nodiff, aes(x = eye_condition, y = pPA, color = shape)) + 
+  geom_boxplot()
+steering_nodiff_bp
+
+steering_nodiff_qq <- ggqqplot(steering_nodiff, "pPA", ggtheme = theme_bw()) +
+  facet_grid(eye_condition ~ shape, labeller = "label_both")
+steering_nodiff_qq
+
+steering_nodiff.aov <- anova_test(
+  data = steering_nodiff,
+  dv = pPA,
+  wid = P_ID_,
+  within = c(eye_condition, shape),
+  effect.size = "pes"
+)
+get_anova_table(steering_nodiff.aov)
+
+steering_nodiff_pwc_eye <- steering_nodiff %>%
+  pairwise_t_test(
+    pPA ~ eye_condition, paired = TRUE, 
+    p.adjust.method = "holm"
+    )
+steering_nodiff_pwc_eye
+
+steering_nodiff_cohens_d <- steering_nodiff %>%
+  cohens_d(pPA ~ eye_condition, paired = TRUE)
+steering_nodiff_cohens_d
+```
+
+## Steering - Interoccular difference > 0.2 logMAR removed
+It appears that steering data is non-normally distributed for some conditions shape A - Worse and Better, shape B - Worse
+compared to all data, effect size of better v both has increased from 0.28 to 0.33 and worse v both reduced from .33 to .32
+```{r Steering BigDiff}
+steering_bigdiff <- bigdiff_data %>%
+  select(P_ID_, SteeringA_Worse:SteeringB_Both) %>%
+  rename("A_Worse" = "SteeringA_Worse",
+         "A_Better" = "SteeringA_Better",
+         "A_Both" = "SteeringA_Both",
+         "B_Worse" = "SteeringB_Worse",
+         "B_Better" = "SteeringB_Better",
+         "B_Both" = "SteeringB_Both")
+
+# gather columns to long format
+steering_bigdiff <- steering_bigdiff %>%
+  gather(key = "condition", value = "pPA", A_Worse, A_Better, A_Both, B_Worse, B_Better, B_Both) %>%
+  extract(condition, c("shape", "eye_condition"), "([[:alnum:]]+)_([[:alnum:]]+)") %>%
+  convert_as_factor(P_ID_, eye_condition) %>% 
+  reorder_levels(eye_condition, order = c("Worse", "Better", "Both"))
+
+steering_bigdiff_summary_stats <- steering_bigdiff %>%
+  group_by(shape, eye_condition) %>%
+  get_summary_stats(pPA, type = "mean_sd")
+steering_bigdiff_summary_stats
+
+steering_bigdiff_bp <- ggplot(steering_bigdiff, aes(x = eye_condition, y = pPA, color = shape)) + 
+  geom_boxplot()
+steering_bigdiff_bp
+
+steering_bigdiff_qq <- ggqqplot(steering_bigdiff, "pPA", ggtheme = theme_bw()) +
+  facet_grid(eye_condition ~ shape, labeller = "label_both")
+steering_bigdiff_qq
+
+steering_bigdiff.aov <- anova_test(
+  data = steering_bigdiff,
+  dv = pPA,
+  wid = P_ID_,
+  within = c(eye_condition, shape),
+  effect.size = "pes"
+)
+get_anova_table(steering_bigdiff.aov)
+
+steering_bigdiff_pwc_eye <- steering_bigdiff %>%
+  pairwise_t_test(
+    pPA ~ eye_condition, paired = TRUE, 
+    p.adjust.method = "holm"
+    )
+steering_bigdiff_pwc_eye
+
+steering_bigdiff_cohens_d <- steering_bigdiff %>%
+  cohens_d(pPA ~ eye_condition, paired = TRUE)
+steering_bigdiff_cohens_d
+```
+
+
+## Steering - Interoccular difference < 0.2 logMAR removed
+No main effect of vision
+```{r Steering Diff}
+steering_diff <- diff_data %>%
+  select(P_ID_, SteeringA_Worse:SteeringB_Both) %>%
+  rename("A_Worse" = "SteeringA_Worse",
+         "A_Better" = "SteeringA_Better",
+         "A_Both" = "SteeringA_Both",
+         "B_Worse" = "SteeringB_Worse",
+         "B_Better" = "SteeringB_Better",
+         "B_Both" = "SteeringB_Both")
+
+# gather columns to long format
+steering_diff <- steering_diff %>%
+  gather(key = "condition", value = "pPA", A_Worse, A_Better, A_Both, B_Worse, B_Better, B_Both) %>%
+  extract(condition, c("shape", "eye_condition"), "([[:alnum:]]+)_([[:alnum:]]+)") %>%
+  convert_as_factor(P_ID_, eye_condition) %>% 
+  reorder_levels(eye_condition, order = c("Worse", "Better", "Both"))
+
+steering_diff_summary_stats <- steering_diff %>%
+  group_by(shape, eye_condition) %>%
+  get_summary_stats(pPA, type = "mean_sd")
+#steering_diff_summary_stats
+
+steering_diff_bp <- ggplot(steering_diff, aes(x = eye_condition, y = pPA, color = shape)) + 
+  geom_boxplot()
+steering_diff_bp
+
+steering_diff_qq <- ggqqplot(steering_diff, "pPA", ggtheme = theme_bw()) +
+  facet_grid(eye_condition ~ shape, labeller = "label_both")
+steering_diff_qq
+
+steering_diff.aov <- anova_test(
+  data = steering_diff,
+  dv = pPA,
+  wid = P_ID_,
+  within = c(eye_condition, shape),
+  effect.size = "pes"
+)
+get_anova_table(steering_diff.aov)
+```
+
+# Tracking
+## Three-way repeated measures anova
+dv = RMSE
+wid = P_ID_
+within = visual condition, speed, guide
+
+Some conditions are not normally distributed, see qq plot for details
+
+No main effect of eye condition.
+Main effect of guide and speed, and a sig. guide*speed interaction.
+Not interested in this effect in this paper, therefore, I am not probing this any further.
+```{r Tracking all data}
+tracking_data <- all_data %>%
+  select(P_ID_, Trkng_NG_Slow_Worse:Trkng_WG_Fast_Both)%>%
+  filter(P_ID_ != 44) 
+
+# gather columns to long format
+tracking_data <- tracking_data %>%
+  gather(key = "condition", value = "RMSE", Trkng_NG_Slow_Worse:Trkng_WG_Fast_Both) %>%
+  extract(condition, c("guide", "speed", "eye_condition"), "([[:alnum:]]+[[:punct:]]+[[:alnum:]]+)_([[:alnum:]]+)_([[:alnum:]]+)") %>%
+  convert_as_factor(P_ID_, guide, speed, eye_condition) %>% 
+  reorder_levels(eye_condition, order = c("Worse", "Better", "Both")) 
+
+tracking_data$RMSE <- as.numeric(tracking_data$RMSE)
+
+tracking_summary_stats <- tracking_data %>%
+  group_by(guide, speed, eye_condition) %>%
+  get_summary_stats(RMSE, type = "mean_sd")
+#tracking_summary_stats
+
+tracking_bp <- ggplot(tracking_data, aes(x = eye_condition, y = RMSE, color = speed)) + 
+  geom_boxplot() +
+  facet_grid(guide~.)
+tracking_bp
+
+tracking_qq <- ggqqplot(tracking_data, "RMSE", ggtheme = theme_bw()) +
+  facet_grid(speed + guide ~ eye_condition, labeller = "label_both")
+tracking_qq
+
+tracking.aov <- anova_test(
+  data = tracking_data,
+  dv = RMSE,
+  wid = P_ID_,
+  within = c(eye_condition, speed, guide),
+  effect.size = "pes"
+)
+get_anova_table(tracking.aov)
+```
+
+## Tracking - Interoccular difference == 0.0 logMAR removed
+
+Some conditions are not normally distributed, see qq plot for details
+
+No main effect of eye condition.
+Main effect of guide and speed, and a sig. guide*speed interaction.
+Not interested in this effect in this paper, therefore, I am not probing this any further.
+```{r Tracking NoDiff}
+tracking_nodiff <- nodiff_data %>%
+  select(P_ID_, Trkng_NG_Slow_Worse:Trkng_WG_Fast_Both)%>%
+  filter(P_ID_ != 44) 
+
+# gather columns to long format
+tracking_nodiff <- tracking_nodiff %>%
+  gather(key = "condition", value = "RMSE", Trkng_NG_Slow_Worse:Trkng_WG_Fast_Both) %>%
+  extract(condition, c("guide", "speed", "eye_condition"), "([[:alnum:]]+[[:punct:]]+[[:alnum:]]+)_([[:alnum:]]+)_([[:alnum:]]+)") %>%
+  convert_as_factor(P_ID_, guide, speed, eye_condition) %>% 
+  reorder_levels(eye_condition, order = c("Worse", "Better", "Both")) 
+
+tracking_nodiff$RMSE <- as.numeric(tracking_nodiff$RMSE)
+
+tracking_nodiff_summary_stats <- tracking_nodiff %>%
+  group_by(guide, speed, eye_condition) %>%
+  get_summary_stats(RMSE, type = "mean_sd")
+#tracking_nodiff_summary_stats
+
+tracking_nodiff_bp <- ggplot(tracking_nodiff, aes(x = eye_condition, y = RMSE, color = speed)) + 
+  geom_boxplot() +
+  facet_grid(guide~.)
+tracking_nodiff_bp
+
+tracking_nodiff_qq <- ggqqplot(tracking_nodiff, "RMSE", ggtheme = theme_bw()) +
+  facet_grid(speed + guide ~ eye_condition, labeller = "label_both")
+tracking_nodiff_qq
+
+tracking_nodiff.aov <- anova_test(
+  data = tracking_nodiff,
+  dv = RMSE,
+  wid = P_ID_,
+  within = c(eye_condition, speed, guide),
+  effect.size = "pes"
+)
+get_anova_table(tracking_nodiff.aov)
+```
+
+## Tracking - Interoccular difference > 0.2 logMAR removed
+
+Some conditions are not normally distributed, see qq plot for details
+
+No main effect of eye condition.
+Main effect of guide and speed, and a sig. guide*speed interaction.
+
+Main effect of eye condition approaching sig. (p = .066)
+pair wise comparisons indicate a significant diference between worse and both, but the efect size is negligable (d = 0.15)
+```{r Tracking BigDiff}
+tracking_bigdiff <- bigdiff_data %>%
+  select(P_ID_, Trkng_NG_Slow_Worse:Trkng_WG_Fast_Both)%>%
+  filter(P_ID_ != 44) 
+
+# gather columns to long format
+tracking_bigdiff <- tracking_bigdiff %>%
+  gather(key = "condition", value = "RMSE", Trkng_NG_Slow_Worse:Trkng_WG_Fast_Both) %>%
+  extract(condition, c("guide", "speed", "eye_condition"), "([[:alnum:]]+[[:punct:]]+[[:alnum:]]+)_([[:alnum:]]+)_([[:alnum:]]+)") %>%
+  convert_as_factor(P_ID_, guide, speed, eye_condition) %>% 
+  reorder_levels(eye_condition, order = c("Worse", "Better", "Both")) 
+
+tracking_bigdiff$RMSE <- as.numeric(tracking_bigdiff$RMSE)
+
+tracking_bigdiff_summary_stats <- tracking_bigdiff %>%
+  group_by(guide, speed, eye_condition) %>%
+  get_summary_stats(RMSE, type = "mean_sd")
+tracking_bigdiff_summary_stats
+
+tracking_bigdiff_bp <- ggplot(tracking_bigdiff, aes(x = eye_condition, y = RMSE, color = speed)) + 
+  geom_boxplot() +
+  facet_grid(guide~.)
+tracking_bigdiff_bp
+
+tracking_bigdiff_qq <- ggqqplot(tracking_bigdiff, "RMSE", ggtheme = theme_bw()) +
+  facet_grid(speed + guide ~ eye_condition, labeller = "label_both")
+tracking_bigdiff_qq
+
+tracking_bigdiff.aov <- anova_test(
+  data = tracking_bigdiff,
+  dv = RMSE,
+  wid = P_ID_,
+  within = c(eye_condition, speed, guide),
+  effect.size = "pes"
+)
+get_anova_table(tracking_bigdiff.aov)
+
+tracking_bigdiff_pwc_eye <- tracking_bigdiff %>%
+  pairwise_t_test(
+    RMSE ~ eye_condition, paired = TRUE, 
+    p.adjust.method = "holm"
+    )
+tracking_bigdiff_pwc_eye
+
+tracking_bigdiff_cohens_d <- tracking_bigdiff %>%
+  cohens_d(RMSE ~ eye_condition, paired = TRUE)
+tracking_bigdiff_cohens_d
+```
+
+## Tracking - Interoccular difference < 0.2 logMAR removed
+
+WG-Fast-Both - has a really high mean RMSE (~24) - Participant 116 has error of 103.74 for this condition
+
+main effect of speed only
+```{r Tracking Diff}
+tracking_diff <- diff_data %>%
+  select(P_ID_, Trkng_NG_Slow_Worse:Trkng_WG_Fast_Both)%>%
+  filter(P_ID_ != 44) 
+
+# gather columns to long format
+tracking_diff <- tracking_diff %>%
+  gather(key = "condition", value = "RMSE", Trkng_NG_Slow_Worse:Trkng_WG_Fast_Both) %>%
+  extract(condition, c("guide", "speed", "eye_condition"), "([[:alnum:]]+[[:punct:]]+[[:alnum:]]+)_([[:alnum:]]+)_([[:alnum:]]+)") %>%
+  convert_as_factor(P_ID_, guide, speed, eye_condition) %>% 
+  reorder_levels(eye_condition, order = c("Worse", "Better", "Both")) 
+
+tracking_diff$RMSE <- as.numeric(tracking_diff$RMSE)
+
+tracking_diff_summary_stats <- tracking_diff %>%
+  group_by(guide, speed, eye_condition) %>%
+  get_summary_stats(RMSE, type = "mean_sd")
+#tracking_diff_summary_stats
+
+tracking_diff_bp <- ggplot(tracking_diff, aes(x = eye_condition, y = RMSE, color = speed)) + 
+  geom_boxplot() +
+  facet_grid(guide~.)
+tracking_diff_bp
+
+tracking_diff_qq <- ggqqplot(tracking_diff, "RMSE", ggtheme = theme_bw()) +
+  facet_grid(speed + guide ~ eye_condition, labeller = "label_both")
+tracking_diff_qq
+
+tracking_diff.aov <- anova_test(
+  data = tracking_diff,
+  dv = RMSE,
+  wid = P_ID_,
+  within = c(eye_condition, speed, guide),
+  effect.size = "pes"
+)
+get_anova_table(tracking_diff.aov)
+```

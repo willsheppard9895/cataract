@@ -247,8 +247,8 @@ plot1 <- ggplot(Tracking_data_NG, aes(x = eye_condition, y = mean_RMSE,
   scale_color_grey(start = .05, end = .5) +
   scale_shape_manual(values = c(21, 22, 23)) +
   labs(x = "Visual Condition", y= "Mean RMSE") + 
-  theme(legend.position = c(0.7, 0.5), legend.title = element_text(size = 20),
-        legend.text = element_text(size = 20))
+  theme(legend.position = c(0.7, 0.85), legend.title = element_text(size = 11),
+        legend.text = element_text(size = 10))
 #show(plot1)
 
 
@@ -272,18 +272,20 @@ plot2 <- ggplot(Tracking_data_WG, aes(x = eye_condition, y = mean_RMSE,
 
 ## ----mb_trackinging_plot--------
 # this pastes the 2 tracking plots together on one figure
-tracking_plot <- ggarrange(plot1, plot2,
+tracking_plot <- ggarrange(plot1, plot2 + rremove("ylab") + rremove("y.text") + rremove("legend"),
                     labels = c("No Guide", "With Guide"), hjust = -1.0, vjust = 1.0, # hjust and vjust move the position of the label (horiz and vertical). Smaller numbers mean further right and down
-                    font.label = list(size = 12, color= "black"),
+                    font.label = list(size = 11, color= "black"),
                     ncol = 2, nrow = 1,
-                    align = "h")#,
+                    align = "h"
+                    )#+ theme(legend.position = c(0, 0.5))
+
 #common.legend = TRUE, legend = "bottom") # also need to change legend to "horizontal" in calc section
 #show(figure)
 
 
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Will_Paper/Figures")
-#setwd("C:/Users/wills/Documents/Cataract/Figures")
-#ggsave("Tracking.png", dpi = 800, height = 8, width = 10)
+setwd("C:/Users/wills/Documents/Cataract/Figures")
+ggsave("Tracking.png", dpi = 800, height = 8, width = 10)
 
 ## ----mb_steering_plot--------
 
