@@ -195,17 +195,17 @@ SumPlot <- function(df, min = 0, max = 20, x = "blank", y_lab = "mean MT (s)"){
 
 setwd("C:/Users/wills/Documents/Cataract/Figures")
 
-Aiming_Plot <- SumPlot(Aiming_data_summary, 0.5, 1.5)
-VA_Plot <- SumPlot(VA_data_summary, -0.1, .4, x = "solid", y_lab = "logMAR")
-CS_Plot <- SumPlot(CS_data_summary, 7.5, 15, y_lab = "Hamilton-Veale Test Score")
-Stereo_Plot <- SumPlot(Stereo_data_summary, 0, 8, y_lab = "Titmus Stereo Fly Test Score")
-PB_Plot <- SumPlot(Pegboard_data_summary, 12, 16, y_lab = "Correct Placements")
-WT_Plot <- SumPlot(WaterTime_data_summary, 12, 18, y_lab = "Time (s)") 
-WA_Plot <- SumPlot(WaterAcc_data_summary, 5, 25, y_lab = "Accuracy (ml)")
-WTA_Plot <- SumPlot(WaterTimebyAcc_data_summary, 100, 350, y_lab = "Time x Accuracy (s/ml)")
+#Aiming_Plot <- SumPlot(Aiming_data_summary, 0.5, 1.5)
+#VA_Plot <- SumPlot(VA_data_summary, -0.1, .4, x = "solid", y_lab = "logMAR")
+#CS_Plot <- SumPlot(CS_data_summary, 7.5, 15, y_lab = "Hamilton-Veale Test Score")
+#Stereo_Plot <- SumPlot(Stereo_data_summary, 0, 8, y_lab = "Titmus Stereo Fly Test Score")
+#PB_Plot <- SumPlot(Pegboard_data_summary, 12, 16, y_lab = "Correct Placements")
+#WT_Plot <- SumPlot(WaterTime_data_summary, 12, 18, y_lab = "Time (s)") 
+#WA_Plot <- SumPlot(WaterAcc_data_summary, 5, 25, y_lab = "Accuracy (ml)")
+#WTA_Plot <- SumPlot(WaterTimebyAcc_data_summary, 100, 350, y_lab = "Time x Accuracy (s/ml)")
 #show(WTA_Plot)
 
-SumPlot_NB <- function(df, min = 0, max = 20, x = "blank", y_lab = "mean MT (s)"){
+SumPlot_NB <- function(df, min = 0, max = 20, x = "blank", y_lab = "mean MT (s)", lab){
   # Creates summary plots, min, max and title defined ot allow quick examination
   plot <-  ggplot(data = df, aes(x=eye_condition, y=mean_DV, fill=eye_condition)) +
     coord_cartesian(ylim = c(min , max)) + #change coordinates for each test
@@ -222,7 +222,7 @@ SumPlot_NB <- function(df, min = 0, max = 20, x = "blank", y_lab = "mean MT (s)"
     geom_hline(linetype = x, yintercept = 0) +
     scale_x_discrete(labels = c("No Filter", "1 Filter", "2 Filters"))
   
-  #ggsave(filename = paste(lab,"_exp2.png", sep = ""), dpi = 800, height = 4, width = 6)
+  ggsave(filename = paste(lab,"_exp2.png", sep = ""), dpi = 800, height = 4, width = 6)
   # TO SAVE - UNCOMMENT ABOVE AND ADD LAB TO FUNCITON
   
   return(plot)
@@ -234,7 +234,7 @@ Aiming_Plot_NB <- SumPlot_NB(Aiming_data_summary, 0.5, 1.5)#, lab = "Aiming_NB")
 VA_Plot_NB <- SumPlot_NB(VA_data_summary, -0.1, .4, x = "solid", y_lab = "logMAR")#, lab = "VisualAcuity_NB"
 CS_Plot_NB <- SumPlot_NB(CS_data_summary, 7.5, 15, y_lab = "Hamilton-Veale Test Score")#, lab = "ConstrastSensitivity_NB"
 Stereo_Plot_NB <- SumPlot_NB(Stereo_data_summary, 0, 8, y_lab = "Titmus Stereo Fly Test Score")#, lab = "Steroacuity_NB"
-PB_Plot_NB <- SumPlot_NB(Pegboard_data_summary, 12, 16, y_lab = "Correct Placements")#, lab = "Pegboard_NB"
+PB_Plot_NB <- SumPlot_NB(Pegboard_data_summary, 12, 16, y_lab = "Correct Peg Placements", lab = "Pegboard_NB")
 WT_Plot_NB <- SumPlot_NB(WaterTime_data_summary, 12, 18, y_lab = "Time (s)")#, lab = "WaterPouring-Time_NB" 
 WA_Plot_NB <- SumPlot_NB(WaterAcc_data_summary, 5, 25, y_lab = "Accuracy (ml)")#, lab = "WaterPouringAccuracy_NB"
 WTA_Plot_NB <- SumPlot_NB(WaterTimebyAcc_data_summary, 100, 350, y_lab = "Time x Accuracy (s*ml)")#, lab = "WaterpouringTimebyaccuracy_NB"
