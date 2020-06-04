@@ -228,16 +228,16 @@ SumPlot_NB <- function(df, min = 0, max = 20, x = "blank", y_lab = "mean MT (s)"
   return(plot)
 }
 
-#setwd("C:/Users/wills/Documents/Cataract/Figures")
+setwd("C:/Users/wills/Documents/Cataract/Figures/General/SimCat")
 
-Aiming_Plot_NB <- SumPlot_NB(Aiming_data_summary, 0.5, 1.5)#, lab = "Aiming_NB")
-VA_Plot_NB <- SumPlot_NB(VA_data_summary, -0.1, .4, x = "solid", y_lab = "logMAR")#, lab = "VisualAcuity_NB"
-CS_Plot_NB <- SumPlot_NB(CS_data_summary, 7.5, 15, y_lab = "Hamilton-Veale Test Score")#, lab = "ConstrastSensitivity_NB"
-Stereo_Plot_NB <- SumPlot_NB(Stereo_data_summary, 0, 8, y_lab = "Titmus Stereo Fly Test Score")#, lab = "Steroacuity_NB"
+Aiming_Plot_NB <- SumPlot_NB(Aiming_data_summary, 1.0, 1.5, lab = "Aiming_NB")
+VA_Plot_NB <- SumPlot_NB(VA_data_summary, -0.1, .4, x = "solid", y_lab = "logMAR", lab = "VisualAcuity_NB")
+CS_Plot_NB <- SumPlot_NB(CS_data_summary, 9, 14, y_lab = "Hamilton-Veale Test Score", lab = "ConstrastSensitivity_NB")
+Stereo_Plot_NB <- SumPlot_NB(Stereo_data_summary, 0, 8, y_lab = "Titmus Stereo Fly Test Score", lab = "Steroacuity_NB")
 PB_Plot_NB <- SumPlot_NB(Pegboard_data_summary, 12, 16, y_lab = "Correct Peg Placements", lab = "Pegboard_NB")
-WT_Plot_NB <- SumPlot_NB(WaterTime_data_summary, 12, 18, y_lab = "Time (s)")#, lab = "WaterPouring-Time_NB" 
-WA_Plot_NB <- SumPlot_NB(WaterAcc_data_summary, 5, 25, y_lab = "Accuracy (ml)")#, lab = "WaterPouringAccuracy_NB"
-WTA_Plot_NB <- SumPlot_NB(WaterTimebyAcc_data_summary, 100, 350, y_lab = "Time x Accuracy (s*ml)")#, lab = "WaterpouringTimebyaccuracy_NB"
+WT_Plot_NB <- SumPlot_NB(WaterTime_data_summary, 12, 18, y_lab = "Time (s)", lab = "WaterPouring-Time_NB") 
+WA_Plot_NB <- SumPlot_NB(WaterAcc_data_summary, 5, 25, y_lab = "Accuracy (ml)", lab = "WaterPouringAccuracy_NB")
+WTA_Plot_NB <- SumPlot_NB(WaterTimebyAcc_data_summary, 100, 350, y_lab = "Time x Accuracy (s*ml)", lab = "WaterpouringTimebyaccuracy_NB")
 
 #show(WTA_Plot_NB)
 
@@ -254,10 +254,11 @@ WP <- ggarrange(WT_Plot_NB + rremove("x.text") + rremove("x.title"), WA_Plot_NB 
 setwd("C:/Users/wills/Documents/Cataract/Figures")
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Simulated_cataracts/Data/Figures")
-ggsave("Exp1_WaterPouring.png", dpi = 800, height = 9, width = 6)
+
+#ggsave("Exp1_VisualMeasures.png", dpi = 800, height = 9, width = 6)
+#ggsave("Exp1_WaterPouring.png", dpi = 800, height = 9, width = 6)
 
 
-=======
 # to make figures
 # still need to work out how to remove legend as it's not helpful, but retain dots/markers
 
