@@ -350,14 +350,14 @@ Aiming_Plot_no_bar <- ggplot(data = Aiming_data_summary, aes(x=eye_condition, y=
   labs(x = "Visual Condition", y= "mean MT (s)") +
   theme(legend.position = "none")
 
-#show(Aiming_Plot_no_bar)
+show(Aiming_Plot_no_bar)
 
 setwd("C:/Users/wills/Documents/Cataract/Figures")
 #setwd("~/OneDrive - University of Leeds/RESEARCH/Cataract/Will_Paper/Figures")
 #setwd("C:/Users/fbsrc/OD/RESEARCH/Cataract/Will_Paper/Figures")
 ggsave("Aiming_No_Bar.png", dpi = 800, height = 4, width = 6)
 
-=======
+
 # this script takes CKAT data seperates into tracking, aiming and steering
 # and formats first for exporting to JASP then makes figures
 # line 145 need to work out why tracking data RMSE means aren't calculating (median is fine)
